@@ -12,6 +12,12 @@ interface LoginPageProps {
 const DEFAULT_EMAIL = "ncalvert@skysystemz.com";
 const DEFAULT_PASSWORD = "password123";
 
+const SEEDED_ACCOUNTS: ReadonlyArray<Account> = [
+  { email: DEFAULT_EMAIL, password: DEFAULT_PASSWORD },
+  { email: "williamb@skysystemz.com", password: "password123" },
+  { email: "test@skysystemz.com", password: "password123" },
+];
+
 const STORAGE_ACCOUNT = "outpave-account";
 const STORAGE_RESET = "outpave-reset-token";
 const STORAGE_PENDING = "outpave-pending-signup";
@@ -496,11 +502,15 @@ function LoginView({
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    const normalized = email.trim().toLowerCase();
     const account = getAccount();
-    if (
-      email.trim().toLowerCase() === account.email.toLowerCase() &&
-      password === account.password
-    ) {
+    const seededMatch = SEEDED_ACCOUNTS.find(
+      (a) => a.email.toLowerCase() === normalized && a.password === password,
+    );
+    const storedMatch =
+      account.email.toLowerCase() === normalized &&
+      password === account.password;
+    if (seededMatch || storedMatch) {
       setError(null);
       onLogin();
     } else {
