@@ -58,10 +58,6 @@ function setAccount(account: Account): void {
   localStorage.setItem(STORAGE_ACCOUNT, JSON.stringify(account));
 }
 
-function getCurrentPassword(): string {
-  return getAccount().password;
-}
-
 function setCurrentPassword(pwd: string): void {
   setAccount({ ...getAccount(), password: pwd });
 }

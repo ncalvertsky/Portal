@@ -544,9 +544,11 @@ export default function PaymentsPage({
           switcher stays pinned at the top of the page-level scroll while the
           overview cards scroll out of view. The solid page-color background
           covers content scrolling underneath. */}
-      <div className="mt-2 sticky top-0 z-20 bg-[var(--color-bg-page)]">
-        <Tabs tabs={tabs} activeId={activeTab} onChange={setActiveTab} />
-      </div>
+    <Tabs
+      tabs={tabs}
+      activeId={activeTab}
+      onChange={(id) => setActiveTab(id as FilterTab)}
+    />
 
       {/* Toolbar — on mobile we collapse the chip row + columns toggle and
           surface a single Filters slide-out button instead. */}
