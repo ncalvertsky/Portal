@@ -1,0 +1,258 @@
+@import "tailwindcss";
+
+/* ====================================================================
+ * Theme: dark (default) / light
+ * Brand-agnostic colors live here. Brand-specific colors are under
+ * `[data-brand="..."]` selectors below so brand swap happens at runtime.
+ * ==================================================================== */
+
+:root,
+[data-theme="dark"] {
+  --color-bg-page: #11151d;
+  --color-bg-elevated: #374151;
+  --color-bg-surface: #151c29;
+  --color-bg-disabled: #6b7280;
+  --color-bg-brand-subtle: #331005;
+  --color-bg-danger: #fee2e2;
+  --color-bg-warning: #fbc1af;
+
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #e5e7eb;
+  --color-text-tertiary: #9ca3af;
+  --color-text-disabled: #9ca3af;
+  --color-text-on-brand: #f8f9fa;
+  --color-text-success: #198f28;
+  --color-text-warning: #fb9170;
+  --color-text-danger: #ef4444;
+
+  --color-positive: #16a34a;
+  --color-negative: #d93a3a;
+  --color-neutral-warn: #f97316;
+
+  --color-border: #2a3750;
+  --color-border-strong: #6b7280;
+  --color-border-subtle: #151c29;
+  --color-border-brand: #fd6f43;
+  --color-border-focus: #fd6f43;
+  --color-border-danger: #dc2626;
+  --color-border-inverse: #ffffff;
+
+  --color-icon-default: #fafafa;
+  --color-icon-secondary: #e5e7eb;
+  --color-icon-disabled: #9ca3af;
+  --color-icon-danger: #b91c1c;
+
+  --color-alpha-white-8: #ffffff14;
+  --color-alpha-white-32: #ffffff52;
+
+  /* Background grid line color (used on the login marketing panel). Light
+     enough to read as a faint texture on the dark page bg. */
+  --color-grid-line: rgba(255, 255, 255, 0.04);
+
+  --stat-card-bg: #171718;
+  --stat-card-bg-hover: #242426;
+  --stat-card-stroke: #484a4d;
+  --stat-card-stroke-hover: #3e3e42;
+  --stat-card-label: #9a9da5;
+  --stat-card-value: #f2f4f5;
+
+  --search-bg: #1a1a1c;
+  --search-stroke: #2c2c2f;
+  --search-placeholder: #5c5f66;
+
+  --nav-item-bg-active: var(--color-bg-page);
+  --nav-item-bg-hover: var(--color-brand-8);
+  --nav-item-text-active: var(--color-text-primary);
+  --nav-item-text-hover: var(--color-text-primary);
+  --nav-item-text-default: var(--color-text-secondary);
+
+  --transaction-avatar-bg: #242426;
+  --transaction-avatar-stroke: #2c2c2f;
+  --transaction-label: #f2f4f5;
+  --transaction-amount: #e6e9eb;
+}
+
+[data-theme="light"] {
+  /* Pulled from the Design System (`6-81160`). Page is the lightest grey,
+   * surface is pure white, elevated is a step darker for hover/active
+   * states. */
+  --color-bg-page: #f8f9fa;
+  --color-bg-surface: #ffffff;
+  --color-bg-elevated: #e6e9eb;
+  --color-bg-brand-subtle: #f7d4c9;
+  --color-bg-danger: #fee2e2;
+  --color-bg-warning: #fbc1af;
+
+  --color-text-primary: #212123;
+  --color-text-secondary: #484a4d;
+  --color-text-tertiary: #6b7280;
+  --color-text-disabled: #9ca3af;
+  --color-text-on-brand: #ffffff;
+  --color-text-success: #198f28;
+  --color-text-warning: #cc3e12;
+  --color-text-danger: #b91c1c;
+
+  --color-positive: #16a34a;
+  --color-negative: #dc2626;
+  --color-neutral-warn: #ea580c;
+
+  --color-border: #e6e9eb;
+  --color-border-strong: #adadaa;
+  --color-border-subtle: #f2f2f7;
+  --color-border-focus: #ff4e17;
+  --color-border-danger: #dc2626;
+  --color-border-inverse: #1e1e2e;
+
+  --color-icon-default: #212123;
+  --color-icon-secondary: #484a4d;
+  --color-icon-disabled: #adadaa;
+  --color-icon-danger: #b91c1c;
+
+  --color-alpha-white-8: #ffffff14;
+  --color-alpha-white-32: #ffffff52;
+
+  --stat-card-bg: #ffffff;
+  --stat-card-bg-hover: #f3f4f6;
+  --stat-card-stroke: #e6e9eb;
+  --stat-card-stroke-hover: #adadaa;
+  --stat-card-label: #484a4d;
+  --stat-card-value: #212123;
+
+  --search-bg: #ffffff;
+  --search-stroke: #e6e9eb;
+  --search-placeholder: #9ca3af;
+
+  --nav-item-bg-active: var(--color-bg-elevated);
+  --nav-item-bg-hover: var(--color-brand-8);
+  --nav-item-text-active: var(--color-text-primary);
+  --nav-item-text-hover: var(--color-text-primary);
+  --nav-item-text-default: var(--color-text-secondary);
+
+  --transaction-avatar-bg: #e6e9eb;
+  --transaction-avatar-stroke: #e6e9eb;
+  --transaction-label: #212123;
+  --transaction-amount: #484a4d;
+
+  /* Light-mode grid lines need a dark tint to be visible on white. */
+  --color-grid-line: rgba(33, 33, 35, 0.06);
+}
+
+/* ====================================================================
+ * Brand: SkyOS (default) / Fractal / Outpave
+ * Switched at runtime via `data-brand` on <html>.
+ *
+ * Brand tokens cover three buckets:
+ *   1. Color  — the brand accent + opacity variants. (8-digit hex:
+ *      `80` ≈ 50%, `33` ≈ 20%, `14` ≈ 8%.)
+ *   2. Type   — the primary sans-serif font family.
+ *   3. Radius — the corner-radius scale used through the UI.
+ *
+ * The mono font is intentionally constant for now (kept on the system
+ * monospace stack) — keep brand overrides off `--font-mono` until we
+ * decide on a per-brand mono pair.
+ * ==================================================================== */
+
+:root,
+[data-brand="skyos"] {
+  --color-brand: #0071e3;
+  --color-brand-50: #0071e380;
+  --color-brand-20: #0071e333;
+  --color-brand-8: #0071e314;
+
+  --font-family-sans: "Inter", sans-serif;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+}
+
+[data-brand="fractal"] {
+  --color-brand: #61c699;
+  --color-brand-50: #61c69980;
+  --color-brand-20: #61c69933;
+  --color-brand-8: #61c69914;
+
+  --font-family-sans: "Inter", sans-serif;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+}
+
+[data-brand="outpave"] {
+  --color-brand: #ff4e17;
+  --color-brand-hover: #992f0e;
+  --color-brand-300: #fb9170;
+  --color-brand-50: #ff4e1780;
+  --color-brand-20: #ff4e1733;
+  --color-brand-12: #ff4e171f;
+  --color-brand-8: #ff4e1714;
+
+  --font-family-sans: "Figtree", "Inter", sans-serif;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+}
+
+/* Mono stays constant across brands for now (per intent). */
+:root {
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
+@theme {
+  --font-sans: var(--font-family-sans);
+  --font-mono: var(--font-family-mono);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  /* Pulls the active brand's sans family at runtime — switching the
+     `data-brand` attribute swaps the font with no JS work. */
+  font-family: var(--font-family-sans);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Hide scrollbar but keep scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Browser autofill — Chrome/Safari paint their own pale background and
+   black text on autofilled inputs, ignoring our token colors. The inset
+   box-shadow trick masks that with bg-elevated, and `-webkit-text-fill-color`
+   overrides the text. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--color-text-primary);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-bg-surface) inset;
+  caret-color: var(--color-text-primary);
+  transition: background-color 9999s ease-out 0s;
+}
