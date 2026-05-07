@@ -12,6 +12,7 @@ import {
   paymentsNavItems,
   paymentRows,
   agreementRows,
+  getMerchant,
   type PageId,
   type PaymentRow,
   type PaymentType,
@@ -270,6 +271,17 @@ export default function RequestDetailPage({
   const titlePrefix = isRequest ? "Request" : "Invoice";
   const status = row.status;
 
+  // Look up the merchant from the canonical directory so contact details
+  // stay in sync with the Support page and any other place a merchant is
+  // referenced. Falls back to row.customer for unknown merchants.
+  const merchant = getMerchant(row.customer);
+  const supplier = {
+    name: merchant?.name ?? row.customer,
+    address: merchant?.address ?? "—",
+    phone: merchant?.phone ?? "—",
+    email: merchant?.email ?? "—",
+  };
+
   const payable = row.action === "pay" || row.action === "sign-pay";
   const payLabel =
     row.action === "sign-pay"
@@ -336,10 +348,10 @@ export default function RequestDetailPage({
           <InfoCard
             title="Supplier"
             items={[
-              { label: "Name", value: row.customer },
-              { label: "Address", value: "123 W Main St, Nashville, TN 40142" },
-              { label: "Phone", value: "+1 (555) 123-4567" },
-              { label: "Note", value: "contact@ozinga.com" },
+              { label: "Name", value: supplier.name },
+              { label: "Address", value: supplier.address },
+              { label: "Phone", value: supplier.phone },
+              { label: "Note", value: supplier.email },
             ]}
           />
           <InfoCard

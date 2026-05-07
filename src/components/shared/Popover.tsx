@@ -173,7 +173,7 @@ export default function Popover({
                 visibility: pos ? "visible" : "hidden",
                 width: matchTriggerWidth && triggerWidth ? triggerWidth : undefined,
               }}
-              className={`z-50 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-xl ${panelClassName}`}
+              className={`z-50 rounded-[28px] bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] ${panelClassName}`}
             >
               {children(() => setOpen(false))}
             </div>
