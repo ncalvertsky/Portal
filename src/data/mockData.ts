@@ -115,7 +115,60 @@ export type NavIconName =
   | "CreditCard"
   | "FileText";
 
-export type PageId = "payments" | "agreements" | "settings" | "team";
+export type PageId = "payments" | "agreements" | "settings" | "team" | "support";
+
+/**
+ * Canonical merchant directory. Anything that displays a merchant's contact
+ * info (RequestDetailPage's Supplier card, the Support page's merchant list,
+ * etc.) should look the merchant up here by `name` so a single edit
+ * propagates everywhere.
+ */
+export interface Merchant {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  /** Optional Google Maps link for the "See on map" affordance. */
+  mapUrl?: string;
+}
+
+export const merchants: Merchant[] = [
+  {
+    id: "ozinga",
+    name: "Ozinga",
+    phone: "+1 (555) 123-4567",
+    email: "support@ozinga.com",
+    address: "123 W Main St, Nashville, TN 40142",
+    mapUrl: "https://www.google.com/maps/search/?api=1&query=123+W+Main+St,+Nashville,+TN+40142",
+  },
+  {
+    id: "knights-redi-mix",
+    name: "Knight's Redi Mix",
+    phone: "+1 (555) 123-4567",
+    email: "support@knightsredimix.com",
+    address: "245 W 38th St, Suite 1201, New York, NY 10018",
+    mapUrl: "https://www.google.com/maps/search/?api=1&query=245+W+38th+St,+Suite+1201,+New+York,+NY+10018",
+  },
+  {
+    id: "sunshine-ready-mix",
+    name: "Sunshine Ready Mix",
+    phone: "+1 (555) 123-4567",
+    email: "support@sunshinereadymix.com",
+    address: "245 W 38th St, Suite 1201, New York, NY 10018",
+    mapUrl: "https://www.google.com/maps/search/?api=1&query=245+W+38th+St,+Suite+1201,+New+York,+NY+10018",
+  },
+];
+
+export function getMerchant(name: string): Merchant | undefined {
+  return merchants.find((m) => m.name === name);
+}
+
+/** Outpave's own support contact — surfaced on the Support page. */
+export const outpaveSupport = {
+  phone: "+1 (855) 935-0100",
+  email: "support@outpave.com",
+};
 
 export interface NavItem {
   label: string;
@@ -157,6 +210,12 @@ export const teamNavItems: NavItem[] = [
   { label: "Payments", icon: "CreditCard", pageId: "payments" },
   { label: "Agreements", icon: "FileText", pageId: "agreements" },
   { label: "Team", icon: "Users2", active: true, pageId: "team" },
+];
+
+export const supportNavItems: NavItem[] = [
+  { label: "Payments", icon: "CreditCard", pageId: "payments" },
+  { label: "Agreements", icon: "FileText", pageId: "agreements" },
+  { label: "Team", icon: "Users2", pageId: "team" },
 ];
 
 export type TeamSummaryFilter = "all" | "active" | "pending";

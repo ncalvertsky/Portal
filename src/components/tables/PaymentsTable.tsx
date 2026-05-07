@@ -358,17 +358,17 @@ export default function PaymentsTable({
                   )}
                 </div>
 
-                <div className="flex flex-col gap-1 min-w-0 flex-1">
-                  <span className="text-sm tracking-tight text-[var(--color-text-primary)] truncate leading-none">
+                <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+                  <span className="text-sm tracking-tight text-[var(--color-text-primary)] truncate leading-tight">
                     {row.type}
                   </span>
-                  <span className="text-sm tracking-tight text-[var(--color-text-secondary)] truncate leading-none">
+                  <span className="text-sm tracking-tight text-[var(--color-text-secondary)] truncate leading-tight">
                     {row.customer}
                   </span>
                 </div>
 
                 <div className="flex flex-col gap-0.5 items-end shrink-0">
-                  <span className="text-sm tracking-tight text-[var(--color-text-primary)] tabular-nums leading-none">
+                  <span className="text-sm tracking-tight text-[var(--color-text-primary)] tabular-nums leading-tight">
                     {row.totalAmount ? (
                       <>
                         <span className="text-[var(--color-text-secondary)]">

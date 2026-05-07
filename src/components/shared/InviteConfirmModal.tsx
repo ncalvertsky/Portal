@@ -124,7 +124,7 @@ export default function InviteConfirmModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="invite-confirm-title"
-        className="relative w-full max-w-[560px] bg-[var(--color-bg-page)] border border-[var(--color-border)] rounded-[20px] shadow-[0_24px_48px_rgba(17,21,29,0.5)] flex flex-col gap-6 p-6"
+        className="relative w-full max-w-[480px] bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-[28px] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] flex flex-col gap-6 p-6"
       >
         {/* Header */}
         <div className="flex flex-col gap-1.5">

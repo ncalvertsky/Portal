@@ -84,6 +84,7 @@ export default function TopBar({ onMenuToggle, onNavigate, onLogout, leftSlot }:
             <ProfileDropdown
               onSelect={() => setProfileOpen(false)}
               onSettings={() => onNavigate?.("settings")}
+              onSupport={() => onNavigate?.("support")}
               onLogout={onLogout}
             />
           )}

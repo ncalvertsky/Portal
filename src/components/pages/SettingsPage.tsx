@@ -13,6 +13,7 @@ import Button from "../shared/Button";
 import Tag from "../shared/Tag";
 import EditProfileModal from "../shared/EditProfileModal";
 import ChangePasswordModal from "../shared/ChangePasswordModal";
+import AddPaymentMethodModal from "../shared/AddPaymentMethodModal";
 import { settingsNavItems, type PageId } from "../../data/mockData";
 import { usePaymentMethods, type PaymentMethod } from "../../PaymentMethodsContext";
 
@@ -208,6 +209,7 @@ function PaymentMethodsBlock() {
   const { methods: cards, setDefault, remove } = usePaymentMethods();
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
 
   const makeDefault = (id: string) => {
     setDefault(id);
@@ -232,8 +234,11 @@ function PaymentMethodsBlock() {
         <h2 className="text-xl font-medium tracking-tight text-[var(--color-text-primary)] leading-none h-10 flex items-center">
           Cards & Bank accounts
         </h2>
-        <Button variant="secondary" icon={Plus}>Add payment method</Button>
+        <Button variant="secondary" icon={Plus} onClick={() => setAddOpen(true)}>
+          Add payment method
+        </Button>
       </div>
+      <AddPaymentMethodModal open={addOpen} onClose={() => setAddOpen(false)} />
 
       <div className="flex flex-col">
         {cards.map((card, i) => (
@@ -376,14 +381,14 @@ function PaymentMethodMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full mt-1 z-30 w-[220px] rounded-2xl bg-[var(--color-bg-page)] border border-[var(--color-border)] shadow-xl p-2"
+          className="absolute right-0 top-full mt-1 z-30 w-[220px] rounded-[28px] bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] p-2"
         >
           <button
             type="button"
             role="menuitem"
             onClick={onMakeDefault}
             disabled={isDefault}
-            className="w-full flex items-center justify-between gap-2 h-10 px-3 rounded-xl text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-surface)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className="w-full flex items-center justify-between gap-2 h-10 px-3 rounded-xl text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
             <span>Default method</span>
           </button>
@@ -391,7 +396,7 @@ function PaymentMethodMenu({
             type="button"
             role="menuitem"
             onClick={onDelete}
-            className="w-full flex items-center justify-between gap-2 h-10 px-3 rounded-xl text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-surface)] transition-colors cursor-pointer"
+            className="w-full flex items-center justify-between gap-2 h-10 px-3 rounded-xl text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)] transition-colors cursor-pointer"
           >
             <span>Delete</span>
             <Trash2 size={16} className="text-[var(--color-negative)]" />
@@ -440,7 +445,7 @@ function DeletePaymentMethodModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-pm-title"
-        className="relative w-full max-w-[440px] rounded-3xl bg-[var(--color-bg-page)] border border-[var(--color-border)] shadow-2xl p-6 flex flex-col gap-5"
+        className="relative w-full max-w-[400px] rounded-[28px] bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] p-6 flex flex-col gap-6"
       >
         <button
           type="button"

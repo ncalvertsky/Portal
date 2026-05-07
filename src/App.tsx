@@ -4,6 +4,7 @@ import PaymentsPage from "./components/pages/PaymentsPage";
 import AgreementsPage from "./components/pages/AgreementsPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import TeamPage from "./components/pages/TeamPage";
+import SupportPage from "./components/pages/SupportPage";
 import RequestDetailPage from "./components/pages/RequestDetailPage";
 import type { PageId } from "./data/mockData";
 
@@ -41,6 +42,7 @@ function App() {
     return <PaymentsPage onNavigate={navigate} onLogout={logout} onViewRequest={setViewingRef} />;
   if (page === "settings") return <SettingsPage onNavigate={navigate} onLogout={logout} />;
   if (page === "team") return <TeamPage onNavigate={navigate} onLogout={logout} />;
+  if (page === "support") return <SupportPage onNavigate={navigate} onLogout={logout} />;
   return <AgreementsPage onNavigate={navigate} onLogout={logout} onViewRequest={setViewingRef} />;
 }
 
