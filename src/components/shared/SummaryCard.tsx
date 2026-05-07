@@ -12,15 +12,24 @@ interface SummaryCardProps {
   onClick?: () => void;
 }
 
-const iconContainerByTone: Record<SummaryCardTone, string> = {
+const iconColorByTone: Record<SummaryCardTone, string> = {
+  default: "text-[var(--color-icon-default)]",
+  danger: "text-[var(--color-text-danger)]",
+  warning: "text-[var(--color-text-warning)]",
+  success: "text-[var(--color-text-success)]",
+};
+
+// Background + border applied only at md+. On mobile the icon is bare to
+// match the tighter pill design.
+const iconBgByTone: Record<SummaryCardTone, string> = {
   default:
-    "bg-[var(--color-bg-surface)] border-[var(--color-border)] text-[var(--color-icon-default)]",
+    "md:bg-[var(--color-bg-surface)] md:border md:border-[var(--color-border)]",
   danger:
-    "bg-[color-mix(in_srgb,var(--color-text-danger)_12%,transparent)] border-[var(--color-border-danger)] text-[var(--color-text-danger)]",
+    "md:bg-[color-mix(in_srgb,var(--color-text-danger)_12%,transparent)] md:border md:border-[var(--color-border-danger)]",
   warning:
-    "bg-[color-mix(in_srgb,var(--color-text-warning)_12%,transparent)] border-[var(--color-text-warning)] text-[var(--color-text-warning)]",
+    "md:bg-[color-mix(in_srgb,var(--color-text-warning)_12%,transparent)] md:border md:border-[var(--color-text-warning)]",
   success:
-    "bg-[color-mix(in_srgb,var(--color-text-success)_12%,transparent)] border-[var(--color-text-success)] text-[var(--color-text-success)]",
+    "md:bg-[color-mix(in_srgb,var(--color-text-success)_12%,transparent)] md:border md:border-[var(--color-text-success)]",
 };
 
 export default function SummaryCard({
@@ -33,7 +42,7 @@ export default function SummaryCard({
   onClick,
 }: SummaryCardProps) {
   const base =
-    "shrink-0 min-w-[140px] rounded-[var(--radius-lg)] border pl-4 pr-6 py-4 flex items-center gap-3 text-left transition-colors cursor-pointer";
+    "shrink-0 rounded-full md:rounded-[var(--radius-lg)] border pl-2 pr-6 py-2 md:pl-4 md:pr-6 md:py-4 flex items-center gap-1 md:gap-3 text-left transition-colors cursor-pointer md:min-w-[140px]";
 
   const stateClasses = selected
     ? "bg-[var(--color-bg-surface)] border-[var(--color-border-brand)]"
@@ -46,7 +55,7 @@ export default function SummaryCard({
       className={`${base} ${stateClasses}`}
     >
       <div
-        className={`size-9 shrink-0 rounded-full border flex items-center justify-center ${iconContainerByTone[tone]}`}
+        className={`size-6 md:size-9 shrink-0 rounded-2xl md:rounded-full flex items-center justify-center ${iconColorByTone[tone]} ${iconBgByTone[tone]}`}
       >
         <Icon size={16} />
       </div>
@@ -58,7 +67,7 @@ export default function SummaryCard({
           {label}
         </span>
         {total && (
-          <span className="text-xs font-medium leading-none tracking-tight text-[var(--color-text-primary)] whitespace-nowrap">
+          <span className="hidden md:inline text-xs font-medium leading-none tracking-tight text-[var(--color-text-primary)] whitespace-nowrap">
             {total}
           </span>
         )}
