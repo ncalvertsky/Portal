@@ -59,7 +59,7 @@ export default function SupportPage({ onNavigate, onLogout }: SupportPageProps =
     <DashboardLayout
       logo={<BrandLogo />}
       navItems={supportNavItems}
-      sidebarFooter={<SidebarCTA />}
+      sidebarFooter={<SidebarCTA onGetStarted={() => onNavigate?.("merchant-signup")} />}
       showLogout={false}
       onNavigate={onNavigate}
       onLogout={onLogout}
@@ -110,7 +110,7 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div className="w-full max-w-[680px] rounded-3xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col">
+    <div className="w-full max-w-[680px] rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col">
       <div className="flex flex-col gap-1.5">
         <h2 className="text-xl font-medium tracking-tight text-[var(--color-text-primary)] leading-none">
           {title}

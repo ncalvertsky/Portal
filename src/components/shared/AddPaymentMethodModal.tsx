@@ -156,7 +156,7 @@ export default function AddPaymentMethodModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-payment-title"
-        className="relative w-full max-w-[480px] max-h-[calc(100vh-2rem)] overflow-y-auto bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-[28px] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] flex flex-col gap-6 p-6"
+        className="relative w-full max-w-[480px] max-h-[calc(100vh-2rem)] overflow-y-auto bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-2xl shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] flex flex-col gap-6 p-6"
       >
         <div className="flex items-start justify-between">
           <h2
@@ -284,7 +284,7 @@ export default function AddPaymentMethodModal({
                 />
               </Field>
               <Field label="Account type">
-                <div className="h-11 pl-5 pr-6 rounded-[28px] bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex items-center gap-2 focus-within:border-[var(--color-border-focus)] transition-colors relative">
+                <div className="h-11 pl-5 pr-6 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex items-center gap-2 focus-within:border-[var(--color-border-focus)] transition-colors relative">
                   <select
                     value={bank.accountType}
                     onChange={(e) =>
@@ -395,7 +395,7 @@ function Input({
   autoComplete?: string;
 }) {
   return (
-    <div className="h-11 pl-5 pr-4 rounded-[28px] bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex items-center gap-2 focus-within:border-[var(--color-border-focus)] transition-colors">
+    <div className="h-11 pl-5 pr-4 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex items-center gap-2 focus-within:border-[var(--color-border-focus)] transition-colors">
       <input
         type="text"
         value={value}

@@ -115,7 +115,13 @@ export type NavIconName =
   | "CreditCard"
   | "FileText";
 
-export type PageId = "payments" | "agreements" | "settings" | "team" | "support";
+export type PageId =
+  | "payments"
+  | "agreements"
+  | "settings"
+  | "team"
+  | "support"
+  | "merchant-signup";
 
 /**
  * Canonical merchant directory. Anything that displays a merchant's contact
@@ -309,17 +315,17 @@ export interface AgreementRow {
 }
 
 export const agreementRows: AgreementRow[] = [
-  { id: "a1", type: "Service Agreement", customer: "Sunshine Ready Mix", orderType: null, issueDate: "08-19-25", dueDate: null, signingDate: null, amount: null, status: "to-sign", statusLabel: "To sign", action: "sign" },
-  { id: "a2", type: "Customer Agreement", customer: "Ozinga", orderType: null, issueDate: "08-18-25", dueDate: null, signingDate: null, amount: null, status: "to-sign", statusLabel: "To sign", action: "sign" },
-  { id: "a3", type: "Terms of Service", customer: "Knight's Redi Mix", orderType: null, issueDate: "08-17-25", dueDate: null, signingDate: null, amount: null, status: "to-sign", statusLabel: "To sign", action: "sign" },
-  { id: "a4", type: "Service Contract", customer: "Ozinga", orderType: "Invoice #617297329", issueDate: "08-16-25", dueDate: "08-20-25", signingDate: null, amount: "$14,100.00", status: "due-soon", statusLabel: "Due soon", action: "sign-pay" },
-  { id: "a5", type: "Sales Contract", customer: "Knight's Redi Mix", orderType: "Estimate EST-7319", issueDate: "08-14-25", dueDate: "08-14-25", signingDate: "08-14-25", amount: "$24,800.00", status: "signed", statusLabel: "Signed", action: "view" },
-  { id: "a6", type: "Liability Waiver", customer: "Ozinga", orderType: "Invoice #615028471", issueDate: "06-02-25", dueDate: "06-02-25", signingDate: "06-02-25", amount: "$42,500.00", status: "signed", statusLabel: "Signed", action: "view" },
-  { id: "a7", type: "Service Agreement", customer: "Knight's Redi Mix", orderType: "Invoice (partial) #615082918", issueDate: "06-02-25", dueDate: "06-02-25", signingDate: null, amount: "$4,300.00", paidAmount: "$2,150.00", status: "overdue", statusLabel: "Overdue", action: "sign-pay" },
-  { id: "a8", type: "Service Agreement", customer: "Ozinga", orderType: null, issueDate: "06-01-25", dueDate: null, signingDate: "06-01-25", amount: null, status: "signed", statusLabel: "Signed", action: "view" },
-  { id: "a9", type: "Customer Agreement", customer: "Sunshine Ready Mix", orderType: "Invoice #614782103", issueDate: "05-18-25", dueDate: "05-18-25", signingDate: "05-18-25", amount: "$8,950.00", status: "signed", statusLabel: "Signed", action: "view" },
-  { id: "a10", type: "Terms of Service", customer: "Ozinga", orderType: null, issueDate: "04-10-25", dueDate: null, signingDate: "04-10-25", amount: null, status: "signed", statusLabel: "Signed", action: "view" },
-  { id: "a11", type: "Service Contract", customer: "Knight's Redi Mix", orderType: "Invoice (partial) #613245987", issueDate: "03-22-25", dueDate: "03-22-25", signingDate: "03-22-25", amount: "$16,200.00", paidAmount: "$4,050.00", status: "signed", statusLabel: "Signed", action: "view" },
+  { id: "a1", type: "Service Agreement", customer: "Silvi Materials", orderType: null, issueDate: "08-19-25", dueDate: null, signingDate: null, amount: null, status: "to-sign", statusLabel: "To sign", action: "sign" },
+  { id: "a2", type: "Customer Agreement", customer: "Silvi Materials", orderType: null, issueDate: "08-18-25", dueDate: null, signingDate: null, amount: null, status: "to-sign", statusLabel: "To sign", action: "sign" },
+  { id: "a3", type: "Terms of Service", customer: "Silvi Materials", orderType: null, issueDate: "08-17-25", dueDate: null, signingDate: null, amount: null, status: "to-sign", statusLabel: "To sign", action: "sign" },
+  { id: "a4", type: "Service Contract", customer: "Silvi Materials", orderType: "Invoice #617297329", issueDate: "08-16-25", dueDate: "08-20-25", signingDate: null, amount: "$14,100.00", status: "due-soon", statusLabel: "Due soon", action: "sign-pay" },
+  { id: "a5", type: "Sales Contract", customer: "Silvi Materials", orderType: "Estimate EST-7319", issueDate: "08-14-25", dueDate: "08-14-25", signingDate: "08-14-25", amount: "$24,800.00", status: "signed", statusLabel: "Signed", action: "view" },
+  { id: "a6", type: "Liability Waiver", customer: "Silvi Materials", orderType: "Invoice #615028471", issueDate: "06-02-25", dueDate: "06-02-25", signingDate: "06-02-25", amount: "$42,500.00", status: "signed", statusLabel: "Signed", action: "view" },
+  { id: "a7", type: "Service Agreement", customer: "Silvi Materials", orderType: "Invoice (partial) #615082918", issueDate: "06-02-25", dueDate: "06-02-25", signingDate: null, amount: "$4,300.00", paidAmount: "$2,150.00", status: "overdue", statusLabel: "Overdue", action: "sign-pay" },
+  { id: "a8", type: "Service Agreement", customer: "Silvi Materials", orderType: null, issueDate: "06-01-25", dueDate: null, signingDate: "06-01-25", amount: null, status: "signed", statusLabel: "Signed", action: "view" },
+  { id: "a9", type: "Customer Agreement", customer: "Silvi Materials", orderType: "Invoice #614782103", issueDate: "05-18-25", dueDate: "05-18-25", signingDate: "05-18-25", amount: "$8,950.00", status: "signed", statusLabel: "Signed", action: "view" },
+  { id: "a10", type: "Terms of Service", customer: "Silvi Materials", orderType: null, issueDate: "04-10-25", dueDate: null, signingDate: "04-10-25", amount: null, status: "signed", statusLabel: "Signed", action: "view" },
+  { id: "a11", type: "Service Contract", customer: "Silvi Materials", orderType: "Invoice (partial) #613245987", issueDate: "03-22-25", dueDate: "03-22-25", signingDate: "03-22-25", amount: "$16,200.00", paidAmount: "$4,050.00", status: "signed", statusLabel: "Signed", action: "view" },
 ];
 
 // Counts are derived from `agreementRows` so they stay in sync with the data.
@@ -384,14 +390,14 @@ export interface PaymentRow {
 }
 
 export const paymentRows: PaymentRow[] = [
-  { type: "Invoice", customer: "Ozinga", reference: "#617297329", issueDate: "08-16-25", dueDate: "08-20-25", amount: "$14,100.00", status: "due-soon", statusLabel: "Due soon", action: "sign-pay" },
-  { type: "Payment request", customer: "Ozinga", reference: "#PR-2048", issueDate: "08-14-25", dueDate: null, amount: "$3,200.00", status: "pending", statusLabel: "Pending", action: "pay" },
-  { type: "Invoice (partial)", customer: "Knight's Redi Mix", reference: "#615082918", issueDate: "06-02-25", dueDate: "06-02-25", amount: "$2,150.00", totalAmount: "$4,300.00", status: "overdue", statusLabel: "Overdue", action: "sign-pay" },
-  { type: "Payment request", customer: "Sunshine Ready Mix", reference: "#PR-1987", issueDate: "05-28-25", dueDate: null, amount: "$1,880.00", status: "pending", statusLabel: "Pending", action: "pay" },
-  { type: "Invoice", customer: "Sunshine Ready Mix", reference: "#614782103", issueDate: "05-18-25", dueDate: "05-18-25", amount: "$8,950.00", status: "paid", statusLabel: "Paid", action: "view" },
-  { type: "Estimate", customer: "Ozinga", reference: "#EST-2837", issueDate: "06-02-25", dueDate: "06-02-25", amount: "$42,500.00", status: "paid", statusLabel: "Paid", action: "view" },
-  { type: "Invoice (partial)", customer: "Knight's Redi Mix", reference: "#613245987", issueDate: "03-22-25", dueDate: "03-22-25", amount: "$4,050.00", totalAmount: "$16,200.00", status: "paid", statusLabel: "Paid", action: "view" },
-  { type: "Payment request", customer: "Knight's Redi Mix", reference: "#PR-1842", issueDate: "02-14-25", dueDate: null, amount: "$750.00", status: "paid", statusLabel: "Paid", action: "view" },
-  { type: "Invoice", customer: "Sunshine Ready Mix", reference: "#612408571", issueDate: "01-28-25", dueDate: "01-28-25", amount: "$22,300.00", status: "paid", statusLabel: "Paid", action: "view" },
-  { type: "Payment request (partial)", customer: "Knight's Redi Mix", reference: "#PR-1654", issueDate: "12-19-24", dueDate: null, amount: "$1,850.00", status: "paid", statusLabel: "Paid", action: "view" },
+  { type: "Invoice", customer: "Silvi Materials", reference: "#617297329", issueDate: "08-16-25", dueDate: "08-20-25", amount: "$14,100.00", status: "due-soon", statusLabel: "Due soon", action: "sign-pay" },
+  { type: "Payment request", customer: "Silvi Materials", reference: "#PR-2048", issueDate: "08-14-25", dueDate: null, amount: "$3,200.00", status: "pending", statusLabel: "Pending", action: "pay" },
+  { type: "Invoice (partial)", customer: "Silvi Materials", reference: "#615082918", issueDate: "06-02-25", dueDate: "06-02-25", amount: "$2,150.00", totalAmount: "$4,300.00", status: "overdue", statusLabel: "Overdue", action: "sign-pay" },
+  { type: "Payment request", customer: "Silvi Materials", reference: "#PR-1987", issueDate: "05-28-25", dueDate: null, amount: "$1,880.00", status: "pending", statusLabel: "Pending", action: "pay" },
+  { type: "Invoice", customer: "Silvi Materials", reference: "#614782103", issueDate: "05-18-25", dueDate: "05-18-25", amount: "$8,950.00", status: "paid", statusLabel: "Paid", action: "view" },
+  { type: "Estimate", customer: "Silvi Materials", reference: "#EST-2837", issueDate: "06-02-25", dueDate: "06-02-25", amount: "$42,500.00", status: "paid", statusLabel: "Paid", action: "view" },
+  { type: "Invoice (partial)", customer: "Silvi Materials", reference: "#613245987", issueDate: "03-22-25", dueDate: "03-22-25", amount: "$4,050.00", totalAmount: "$16,200.00", status: "paid", statusLabel: "Paid", action: "view" },
+  { type: "Payment request", customer: "Silvi Materials", reference: "#PR-1842", issueDate: "02-14-25", dueDate: null, amount: "$750.00", status: "paid", statusLabel: "Paid", action: "view" },
+  { type: "Invoice", customer: "Silvi Materials", reference: "#612408571", issueDate: "01-28-25", dueDate: "01-28-25", amount: "$22,300.00", status: "paid", statusLabel: "Paid", action: "view" },
+  { type: "Payment request (partial)", customer: "Silvi Materials", reference: "#PR-1654", issueDate: "12-19-24", dueDate: null, amount: "$1,850.00", status: "paid", statusLabel: "Paid", action: "view" },
 ];

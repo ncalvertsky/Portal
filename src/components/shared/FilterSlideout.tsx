@@ -34,7 +34,6 @@ export const emptyFilters: FilterState = {
 interface FilterSlideoutProps {
   open: boolean;
   tab: FilterTab;
-  merchants: string[];
   value: FilterState;
   onClose: () => void;
   onApply: (filters: FilterState) => void;
@@ -64,7 +63,6 @@ function toggle<T>(arr: T[], value: T): T[] {
 export default function FilterSlideout({
   open,
   tab,
-  merchants,
   value,
   onClose,
   onApply,
@@ -162,50 +160,17 @@ export default function FilterSlideout({
             </Section>
           )}
 
-          {/* Merchant (All tab puts Status before Merchant; Requests/Invoices put Merchant first) */}
-          {tab === "all" ? (
-            <>
-              <Section title="Status">
-                <CheckboxList
-                  options={statusOptions}
-                  selected={draft.statuses}
-                  onToggle={(id) =>
-                    setDraft((d) => ({ ...d, statuses: toggle(d.statuses, id) }))
-                  }
-                />
-              </Section>
-              <Section title="Merchant">
-                <CheckboxList
-                  options={merchants.map((m) => ({ id: m, label: m }))}
-                  selected={draft.merchants}
-                  onToggle={(id) =>
-                    setDraft((d) => ({ ...d, merchants: toggle(d.merchants, id) }))
-                  }
-                />
-              </Section>
-            </>
-          ) : (
-            <>
-              <Section title="Merchant">
-                <CheckboxList
-                  options={merchants.map((m) => ({ id: m, label: m }))}
-                  selected={draft.merchants}
-                  onToggle={(id) =>
-                    setDraft((d) => ({ ...d, merchants: toggle(d.merchants, id) }))
-                  }
-                />
-              </Section>
-              <Section title="Status">
-                <CheckboxList
-                  options={statusOptions}
-                  selected={draft.statuses}
-                  onToggle={(id) =>
-                    setDraft((d) => ({ ...d, statuses: toggle(d.statuses, id) }))
-                  }
-                />
-              </Section>
-            </>
-          )}
+          {/* Status — merchant section removed since all rows are from
+           *  Silvi Materials. */}
+          <Section title="Status">
+            <CheckboxList
+              options={statusOptions}
+              selected={draft.statuses}
+              onToggle={(id) =>
+                setDraft((d) => ({ ...d, statuses: toggle(d.statuses, id) }))
+              }
+            />
+          </Section>
 
           {/* Date */}
           <Section title="Date">

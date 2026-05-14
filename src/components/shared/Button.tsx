@@ -37,10 +37,10 @@ const variantClasses: Record<ButtonVariant, string> = {
   ].join(" "),
 
   secondary: [
-    "bg-[var(--color-bg-page)] text-[var(--color-text-primary)] border border-[var(--color-border)]",
+    "bg-transparent text-[var(--color-text-primary)] border border-[var(--color-border)]",
     "hover:bg-[var(--color-bg-elevated)]",
     "active:bg-[var(--color-bg-surface)]",
-    "disabled:text-[var(--color-text-secondary)] disabled:hover:bg-[var(--color-bg-page)]",
+    "disabled:text-[var(--color-text-secondary)] disabled:hover:bg-transparent",
     "focus-visible:border-[var(--color-brand)]",
   ].join(" "),
 

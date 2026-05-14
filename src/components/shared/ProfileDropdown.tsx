@@ -14,7 +14,7 @@ export default function ProfileDropdown({
   onLogout,
 }: ProfileDropdownProps) {
   return (
-    <div className="absolute right-0 top-full mt-2 z-50 w-[280px] rounded-[28px] bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] overflow-hidden">
+    <div className="absolute right-0 top-full mt-2 z-50 w-[280px] rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-[var(--color-border)]">
         <div className="size-11 rounded-full bg-[var(--color-bg-elevated)] flex items-center justify-center shrink-0">

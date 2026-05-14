@@ -172,7 +172,7 @@ export default function PaymentsTable({
     // Same scroll pattern as `AgreementsTable` — vertical scroll is owned by
     // the page-level container; we only enable horizontal scroll on desktop
     // for the wide grid (≥1060px min-width).
-    <div className="w-full overflow-hidden bg-[var(--color-bg-surface)] rounded-[13px] border border-[var(--color-border)] md:overflow-x-auto md:rounded-lg">
+    <div className="w-full overflow-hidden bg-[var(--color-bg-surface)] rounded-md border border-[var(--color-border)] md:overflow-x-auto md:rounded-lg">
       <div
         // `min-width` only applies at md+ — on mobile the cards fill the
         // viewport with no horizontal scroll. Driven by a CSS var so the

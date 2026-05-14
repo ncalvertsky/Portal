@@ -1,8 +1,16 @@
 import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
-import { SlidersHorizontal, RefreshCw, CalendarX, Clock, Columns3, Calendar, Check, ChevronDown, Eye, EyeClosed, Search } from "lucide-react";
+import { SlidersHorizontal, RefreshCw, CalendarX, Clock, Columns3, Eye, EyeClosed, Search } from "lucide-react";
 import type { SummaryCardTone } from "../shared/SummaryCard";
 import FilterPopover from "../shared/FilterPopover";
 import Popover from "../shared/Popover";
+import {
+  AmountInput,
+  CheckRow,
+  DateFieldGroup,
+  PresetMenu,
+  detectPreset,
+  presetRange,
+} from "../shared/FilterFields";
 import DashboardLayout from "../layout/DashboardLayout";
 import BrandLogo from "../shared/BrandLogo";
 import SidebarCTA from "../shared/SidebarCTA";
@@ -98,8 +106,6 @@ function sortRows(rows: PaymentRow[], state: SortState | null): PaymentRow[] {
   return [...rows].sort((a, b) => sign * compareByKey(a, b, state.key));
 }
 
-const uniqueMerchants = Array.from(new Set(paymentRows.map((r) => r.customer)));
-
 function matchesSummary(row: PaymentRow, filter: PaymentSummaryFilter): boolean {
   if (filter === "outstanding") return row.status !== "paid";
   if (filter === "overdue") return row.status === "overdue";
@@ -145,210 +151,6 @@ function toggleInvoiceType(setFilters: SetFilters, value: InvoiceTypeFilter) {
 
 function toggleStatus(setFilters: SetFilters, value: StatusFilter) {
   setFilters((f) => ({ ...f, statuses: toggleInArray(f.statuses, value) }));
-}
-
-function toggleMerchant(setFilters: SetFilters, value: string) {
-  setFilters((f) => ({ ...f, merchants: toggleInArray(f.merchants, value) }));
-}
-
-// 44px-tall money input that matches the Figma `Input / Default` spec used in
-// the Total/Amount filter dropdown.
-function AmountInput({
-  placeholder,
-  value,
-  onChange,
-}: {
-  placeholder: string;
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <div className="w-full flex items-center gap-2 h-11 px-4 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] focus-within:border-[var(--color-border-focus)] transition-colors">
-      <span className="w-4 text-center text-base text-[var(--color-text-primary)] shrink-0">
-        $
-      </span>
-      <input
-        type="text"
-        inputMode="decimal"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="flex-1 min-w-0 bg-transparent outline-none text-base text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)]"
-      />
-    </div>
-  );
-}
-
-// 44px-tall date field that matches the Figma `Input / Default` spec used in
-// the Date filter dropdown.
-function DateInput({
-  value,
-  onChange,
-  placeholder = "MM-DD-YY",
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-}) {
-  return (
-    <div className="w-full flex items-center gap-2 h-11 px-4 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] focus-within:border-[var(--color-border-focus)] transition-colors">
-      <Calendar size={20} className="text-[var(--color-icon-secondary)] shrink-0" />
-      <input
-        type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="flex-1 min-w-0 bg-transparent outline-none text-base text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)]"
-      />
-    </div>
-  );
-}
-
-// ----- Date preset helpers ---------------------------------------------------
-
-type DatePreset = "all" | "today" | "7d" | "30d" | "60d" | "90d" | "custom";
-
-// Quick-range presets shown in the "Show payments for" menu. Order + labels
-// match the Figma `filter-dropdown-quickrange` design. "All time" and
-// "Custom range" aren't surfaced in the menu — clearing the filter or editing
-// the From/To inputs handle those states implicitly.
-const datePresetOptions: { id: DatePreset; label: string }[] = [
-  { id: "today", label: "Today" },
-  { id: "7d", label: "Last 7 days" },
-  { id: "30d", label: "Last 30 days" },
-  { id: "60d", label: "Last 60 days" },
-  { id: "90d", label: "Last 90 days" },
-];
-
-function formatMMDDYY(d: Date): string {
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  const yy = String(d.getFullYear()).slice(-2);
-  return `${mm}-${dd}-${yy}`;
-}
-
-function detectPreset(from: string, to: string): DatePreset {
-  if (!from && !to) return "all";
-  // Walk known presets and return the one whose computed range matches.
-  for (const o of datePresetOptions) {
-    if (o.id === "all" || o.id === "custom") continue;
-    const r = presetRange(o.id);
-    if (r.from === from && r.to === to) return o.id;
-  }
-  return "custom";
-}
-
-function presetRange(p: DatePreset): { from: string; to: string } {
-  const today = new Date();
-  const t = formatMMDDYY(today);
-  const back = (days: number) => {
-    const d = new Date(today);
-    d.setDate(d.getDate() - days);
-    return formatMMDDYY(d);
-  };
-  switch (p) {
-    case "all":
-      return { from: "", to: "" };
-    case "today":
-      return { from: t, to: t };
-    case "7d":
-      return { from: back(6), to: t };
-    case "30d":
-      return { from: back(29), to: t };
-    case "60d":
-      return { from: back(59), to: t };
-    case "90d":
-      return { from: back(89), to: t };
-    case "custom":
-      return { from: "", to: "" };
-  }
-}
-
-const PRESET_LABELS: Record<DatePreset, string> = {
-  all: "All time",
-  today: "Today",
-  "7d": "Last 7 days",
-  "30d": "Last 30 days",
-  "60d": "Last 60 days",
-  "90d": "Last 90 days",
-  custom: "Custom range",
-};
-
-// Dropdown-style trigger + nested popover that lists the quick-range presets.
-// Matches the Figma `dropdown-button` (44px h-11, rounded-2xl, surface bg,
-// chevron right) and the `filter-dropdown-quickrange` panel style.
-function PresetMenu({
-  value,
-  onChange,
-}: {
-  value: DatePreset;
-  onChange: (p: DatePreset) => void;
-}) {
-  return (
-    <Popover
-      matchTriggerWidth
-      panelClassName="p-2 flex flex-col"
-      trigger={({ open, toggle }) => (
-        <button
-          type="button"
-          aria-haspopup="menu"
-          aria-expanded={open}
-          onClick={toggle}
-          className={`w-full flex items-center justify-between h-11 px-4 rounded-2xl bg-[var(--color-bg-surface)] border text-sm text-[var(--color-text-primary)] outline-none cursor-pointer transition-colors ${
-            open
-              ? "border-[var(--color-border-focus)]"
-              : "border-[var(--color-border)] hover:border-[var(--color-border-strong)]"
-          }`}
-        >
-          <span>{PRESET_LABELS[value]}</span>
-          <ChevronDown
-            size={20}
-            className={`text-[var(--color-icon-secondary)] transition-transform ${
-              open ? "rotate-180" : ""
-            }`}
-          />
-        </button>
-      )}
-    >
-      {(close) =>
-        datePresetOptions.map((o) => (
-          <button
-            key={o.id}
-            type="button"
-            role="menuitem"
-            onClick={() => {
-              onChange(o.id);
-              close();
-            }}
-            className="w-full flex items-center h-[42px] pl-4 pr-3 rounded-xl text-left hover:bg-[var(--color-bg-elevated)] transition-colors cursor-pointer text-sm tracking-tight text-[var(--color-text-primary)]"
-          >
-            {o.label}
-          </button>
-        ))
-      }
-    </Popover>
-  );
-}
-
-function DateFieldGroup({
-  label,
-  value,
-  onChange,
-  placeholder,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="text-sm font-medium tracking-tight text-[var(--color-text-secondary)]">
-        {label}
-      </span>
-      <DateInput value={value} onChange={onChange} placeholder={placeholder} />
-    </div>
-  );
 }
 
 // Menu-item row used by the customize-columns popover. Matches the Figma
@@ -399,36 +201,6 @@ function ColumnToggleRow({
             : "text-[var(--color-text-tertiary)]"
         }`}
       />
-    </button>
-  );
-}
-
-// Menu-item row used inside filter dropdowns. Matches the Figma
-// "filter-dropdown-*" menu items: 42px tall, rounded-xl, hover-surface bg,
-// 14px label on the left, brand-colored ✓ on the right when selected.
-function CheckRow({
-  label,
-  checked,
-  onToggle,
-}: {
-  label: string;
-  checked: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      role="menuitemcheckbox"
-      aria-checked={checked}
-      onClick={onToggle}
-      className="w-full flex items-center gap-3 h-[42px] pl-4 pr-3 rounded-xl text-left hover:bg-[var(--color-bg-elevated)] transition-colors cursor-pointer"
-    >
-      <span className="flex-1 min-w-0 text-sm tracking-tight text-[var(--color-text-primary)] truncate">
-        {label}
-      </span>
-      {checked && (
-        <Check size={20} className="text-[var(--color-brand)] shrink-0" />
-      )}
     </button>
   );
 }
@@ -509,7 +281,7 @@ export default function PaymentsPage({
     <DashboardLayout
       logo={<BrandLogo />}
       navItems={paymentsNavItems}
-      sidebarFooter={<SidebarCTA />}
+      sidebarFooter={<SidebarCTA onGetStarted={() => onNavigate?.("merchant-signup")} />}
       showLogout={false}
       onNavigate={onNavigate}
       onLogout={onLogout}
@@ -655,31 +427,6 @@ export default function PaymentsPage({
             )}
           </FilterPopover>
 
-          {/* Merchant */}
-          <FilterPopover
-            label={
-              filters.merchants.length > 0
-                ? `Merchant (${filters.merchants.length})`
-                : "Merchant"
-            }
-            selected={filters.merchants.length > 0}
-            onClear={() => setFilters((f) => ({ ...f, merchants: [] }))}
-            panelClassName="w-80 max-h-80 overflow-y-auto p-2 flex flex-col"
-          >
-            {() => (
-              <>
-                {uniqueMerchants.map((m) => (
-                  <CheckRow
-                    key={m}
-                    label={m}
-                    checked={filters.merchants.includes(m)}
-                    onToggle={() => toggleMerchant(setFilters, m)}
-                  />
-                ))}
-              </>
-            )}
-          </FilterPopover>
-
           {/* Date — preset + From/To range, matches Figma "filter-dropdown-merchant" (date) */}
           <FilterPopover
             label="Date"
@@ -734,7 +481,7 @@ export default function PaymentsPage({
                   aria-label="Customize columns"
                   aria-expanded={open}
                   onClick={toggle}
-                  className={`shrink-0 size-11 rounded-full bg-[var(--color-bg-surface)] border flex items-center justify-center transition-colors cursor-pointer focus-visible:outline-none ${
+                  className={`shrink-0 size-11 rounded-2xl bg-[var(--color-bg-surface)] border flex items-center justify-center transition-colors cursor-pointer focus-visible:outline-none ${
                     open
                       ? "border-[var(--color-border-focus)] text-[var(--color-text-primary)]"
                       : "border-[var(--color-border)] text-[var(--color-icon-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] active:border-[var(--color-border-strong)] focus-visible:border-[var(--color-border-focus)]"
@@ -775,13 +522,13 @@ export default function PaymentsPage({
               type="button"
               aria-label="Search"
               onClick={() => setTabletSearchOpen(true)}
-              className="hidden md:flex lg:hidden shrink-0 size-11 rounded-full bg-[var(--color-bg-surface)] border border-[var(--color-border)] items-center justify-center text-[var(--color-icon-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] active:border-[var(--color-border-strong)] focus-visible:outline-none focus-visible:border-[var(--color-border-focus)] transition-colors cursor-pointer"
+              className="hidden md:flex lg:hidden shrink-0 size-11 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] items-center justify-center text-[var(--color-icon-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] active:border-[var(--color-border-strong)] focus-visible:outline-none focus-visible:border-[var(--color-border-focus)] transition-colors cursor-pointer"
             >
               <Search size={20} />
             </button>
           )}
           <SearchBar
-            placeholder="Search by business or reference no."
+            placeholder="Search by business or reference"
             value={search}
             onChange={setSearch}
             autoFocus={tabletSearchOpen}
@@ -789,12 +536,12 @@ export default function PaymentsPage({
               if (!search) setTabletSearchOpen(false);
             }}
             className={`flex-1 ${
-              tabletSearchOpen ? "md:flex md:w-64 md:flex-none" : "md:hidden"
-            } lg:flex lg:w-72 lg:flex-none`}
+              tabletSearchOpen ? "md:flex md:w-72 md:flex-none" : "md:hidden"
+            } lg:flex lg:w-80 lg:flex-none`}
           />
           <button
             onClick={() => setFiltersOpen(true)}
-            className="size-11 rounded-full bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-icon-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] active:border-[var(--color-border-strong)] focus-visible:outline-none focus-visible:border-[var(--color-border-focus)] transition-colors cursor-pointer shrink-0 md:hidden"
+            className="size-11 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-icon-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] active:border-[var(--color-border-strong)] focus-visible:outline-none focus-visible:border-[var(--color-border-focus)] transition-colors cursor-pointer shrink-0 md:hidden"
             aria-label="Open filters"
           >
             <SlidersHorizontal size={20} />
@@ -827,7 +574,6 @@ export default function PaymentsPage({
       <FilterSlideout
         open={filtersOpen}
         tab={activeTab}
-        merchants={uniqueMerchants}
         value={filters}
         onClose={() => setFiltersOpen(false)}
         onApply={setFilters}

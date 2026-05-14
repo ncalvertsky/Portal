@@ -91,6 +91,23 @@ export default function DashboardLayout({
             {children}
           </div>
 
+          {/* Compliance disclosure — pinned below the scroll area so it
+              stays visible on every page. Intentionally subdued (text-tertiary
+              at ~43% opacity) per the Figma. */}
+          <p className="shrink-0 px-[31px] text-center text-xs leading-4 tracking-tight text-[var(--color-text-tertiary)] opacity-[0.43] truncate">
+            Outpave partners with Highnote Payments Company for money
+            transmission services and account services with funds held at Fifth
+            Third Bank N.A., Member FDIC.{" "}
+            <a
+              href="https://brandfetch.com/developers/logo-api"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-[var(--color-text-primary)] transition-colors"
+            >
+              Logos by Brandfetch.
+            </a>
+          </p>
+
           {/* Backdrop over the (pushed) main content — tap to close. Sits
               inside main so it translates with the rest of the page. */}
           <button

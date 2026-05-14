@@ -43,7 +43,7 @@ export default function InviteMemberModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="invite-member-title"
-        className="relative w-full max-w-[600px] max-h-[90vh] bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-[28px] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] flex flex-col overflow-hidden"
+        className="relative w-full max-w-[600px] max-h-[90vh] bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-2xl shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] flex flex-col overflow-hidden"
       >
         {/* Header — stays pinned while the grid scrolls below. */}
         <div className="shrink-0 flex flex-col gap-1.5 px-6 pt-6 pb-4 bg-[var(--color-bg-surface)] border-b border-[var(--color-border-subtle)]">

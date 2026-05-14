@@ -14,7 +14,7 @@ export default function Selector({
   ariaLabel,
 }: SelectorProps) {
   const base =
-    "size-4 rounded-[4px] border-[1.2px] inline-flex items-center justify-center transition-colors shrink-0";
+    "size-4 rounded-xs border-[1.2px] inline-flex items-center justify-center transition-colors shrink-0";
 
   const interactive = disabled
     ? "cursor-not-allowed opacity-60"

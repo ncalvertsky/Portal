@@ -1,6 +1,10 @@
 import { Send } from "lucide-react";
 
-export default function SidebarCTA() {
+interface SidebarCTAProps {
+  onGetStarted?: () => void;
+}
+
+export default function SidebarCTA({ onGetStarted }: SidebarCTAProps = {}) {
   return (
     <div className="rounded-2xl bg-[var(--color-bg-page)] border border-[var(--color-border-brand)] p-4 flex flex-col gap-3">
       <div className="size-12 rounded-full bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-text-primary)] shrink-0">
@@ -16,6 +20,7 @@ export default function SidebarCTA() {
       </div>
       <button
         type="button"
+        onClick={onGetStarted}
         className="w-full h-10 rounded-xl text-sm font-semibold bg-[var(--color-brand)] text-[var(--color-text-on-brand)] hover:bg-[var(--color-brand-hover)] transition-colors cursor-pointer"
       >
         Get started

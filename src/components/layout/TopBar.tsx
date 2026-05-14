@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { HelpCircle, Bell, ChevronDown, Menu } from "lucide-react";
+import { HelpCircle, Bell, Check, ChevronDown, Menu } from "lucide-react";
 import ProfileDropdown from "../shared/ProfileDropdown";
+import Popover from "../shared/Popover";
 import type { PageId } from "../../data/mockData";
 
 interface TopBarProps {
@@ -50,6 +51,7 @@ export default function TopBar({ onMenuToggle, onNavigate, onLogout, leftSlot }:
 
       {/* Right side */}
       <div className="flex items-center gap-2 md:gap-3 shrink-0">
+        <CompanySwitcher />
         <div className="flex items-center gap-2 md:gap-3">
           <HelpCircle size={20} className="text-[var(--color-icon-secondary)] cursor-pointer hidden md:block" />
           <div className="relative">
@@ -91,5 +93,71 @@ export default function TopBar({ onMenuToggle, onNavigate, onLogout, leftSlot }:
         </div>
       </div>
     </div>
+  );
+}
+
+/** Header company switcher (Figma 1244:121533). Mock-only — selecting a
+ *  company updates local state for the chip label but doesn't navigate or
+ *  refetch anything. Built on the shared `Popover` so click-outside /
+ *  Escape / portal-positioning behave like every other dropdown in the app. */
+const COMPANIES = ["Silvi Materials", "Ozinga", "Sunshine Ready Mix"] as const;
+
+function CompanySwitcher() {
+  const [company, setCompany] = useState<(typeof COMPANIES)[number]>(
+    "Silvi Materials",
+  );
+  return (
+    <Popover
+      align="end"
+      panelClassName="w-56 p-2 flex flex-col"
+      trigger={({ open, toggle }) => (
+        <button
+          type="button"
+          onClick={toggle}
+          aria-expanded={open}
+          aria-label="Switch company"
+          className={`hidden md:inline-flex items-center gap-2 h-9 pl-3.5 pr-2.5 rounded-full bg-[var(--color-bg-surface)] border transition-colors cursor-pointer ${
+            open
+              ? "border-[var(--color-border-focus)]"
+              : "border-[var(--color-border)] hover:bg-[var(--color-bg-elevated)]"
+          }`}
+        >
+          <span className="text-sm font-medium text-[var(--color-text-primary)] whitespace-nowrap">
+            {company}
+          </span>
+          <ChevronDown
+            size={16}
+            className="text-[var(--color-icon-secondary)]"
+          />
+        </button>
+      )}
+    >
+      {(close) => (
+        <>
+          {COMPANIES.map((c) => {
+            const active = c === company;
+            return (
+              <button
+                key={c}
+                type="button"
+                onClick={() => {
+                  setCompany(c);
+                  close();
+                }}
+                className="flex items-center justify-between gap-2 h-10 px-3 rounded-xl text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)] transition-colors cursor-pointer text-left"
+              >
+                <span className="truncate">{c}</span>
+                {active && (
+                  <Check
+                    size={16}
+                    className="text-[var(--color-brand)] shrink-0"
+                  />
+                )}
+              </button>
+            );
+          })}
+        </>
+      )}
+    </Popover>
   );
 }

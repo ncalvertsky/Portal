@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { Eye, EyeOff, Mail } from "lucide-react";
-import OutpaveLogo from "../shared/OutpaveLogo";
+import { ChevronDown, Eye, EyeOff, Mail } from "lucide-react";
+import BrandLogo from "../shared/BrandLogo";
 import Button from "../shared/Button";
 import Selector from "../shared/Selector";
 import dashboardPreview from "../../assets/e10c1adfd38cdc6fc2d4c9d70ecdafda78448193.png";
 
 interface LoginPageProps {
   onLogin: () => void;
+  /** Optional escape back to the internal Projects picker. When provided, a
+   *  small "← Projects" link renders in the top-left of the form pane. */
+  onExitProject?: () => void;
 }
 
 const DEFAULT_EMAIL = "ncalvert@skysystemz.com";
@@ -22,7 +25,14 @@ const STORAGE_ACCOUNT = "outpave-account";
 const STORAGE_RESET = "outpave-reset-token";
 const STORAGE_PENDING = "outpave-pending-signup";
 
-type View = "login" | "forgot" | "sent" | "reset" | "signup" | "verify";
+type View =
+  | "login"
+  | "forgot"
+  | "sent"
+  | "reset"
+  | "signup"
+  | "verify"
+  | "business-info";
 
 interface Account {
   email: string;
@@ -285,7 +295,7 @@ function sendVerifyEmail(toEmail: string, code: string): Promise<void> {
   );
 }
 
-export default function LoginPage({ onLogin }: LoginPageProps) {
+export default function LoginPage({ onLogin, onExitProject }: LoginPageProps) {
   // If the URL carries a valid reset token, jump straight to the reset view.
   const initialView = useMemo<View>(() => {
     const params = new URLSearchParams(window.location.search);
@@ -293,13 +303,30 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   }, []);
   const [view, setView] = useState<View>(initialView);
 
+  // -----------------------------------------------------------------------
+  // Layout — centered card on a dark page (Figma 693:52436). The marketing
+  // panel was retired but kept as `<MarketingPanel />` below in case we want
+  // to restore the split-screen layout. To bring it back: swap the JSX
+  // returned here for the legacy block at the bottom of this function (see
+  // `LEGACY_SPLIT_LAYOUT` comment).
+  // -----------------------------------------------------------------------
   return (
-    <div className="flex h-screen gap-3 p-3 bg-[var(--color-bg-page)]">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--color-bg-page)] px-4 py-10">
+      {onExitProject && (
+        <button
+          type="button"
+          onClick={onExitProject}
+          className="absolute top-4 left-4 z-50 inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-[var(--color-bg-surface)] border border-[var(--color-border)] text-xs font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)] transition-colors cursor-pointer"
+          aria-label="Back to Projects"
+        >
+          ← Projects
+        </button>
+      )}
       <form
         onSubmit={(e) => e.preventDefault()}
-        className="flex-1 max-w-[600px] mx-auto lg:mx-0 flex flex-col gap-6 justify-center items-start px-8 lg:px-20 rounded-[var(--radius-2xl)]"
+        className="w-full max-w-[520px] flex flex-col gap-6 p-8 sm:p-10 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)]"
       >
-        <OutpaveLogo accent className="h-9 w-auto self-start" />
+        <BrandLogo className="h-9 w-auto self-start" />
 
         {view === "login" && (
           <LoginView
@@ -338,19 +365,50 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           <VerifyView
             onVerified={() => {
               clearPendingSignup();
-              onLogin();
+              setView("business-info");
             }}
             onBack={() => setView("login")}
           />
         )}
+        {view === "business-info" && (
+          <BusinessInfoView
+            onBack={() => setView("verify")}
+            onNext={onLogin}
+            onLogin={() => setView("login")}
+          />
+        )}
       </form>
-
-      <MarketingPanel />
     </div>
   );
+
+  // -----------------------------------------------------------------------
+  // LEGACY_SPLIT_LAYOUT — the original split-screen layout with the
+  // MarketingPanel on the right. Unreachable now; preserved so we can
+  // restore it by replacing the `return` above with the block below.
+  //
+  // return (
+  //   <div className="flex h-screen gap-3 p-3 bg-[var(--color-bg-page)]">
+  //     {onExitProject && (
+  //       <button … >← Projects</button>
+  //     )}
+  //     <form
+  //       onSubmit={(e) => e.preventDefault()}
+  //       className="flex-1 max-w-[600px] mx-auto lg:mx-0 flex flex-col gap-6 justify-center items-start px-8 lg:px-20 rounded-[var(--radius-2xl)]"
+  //     >
+  //       <BrandLogo className="h-9 w-auto self-start" />
+  //       {/* …same view switch as above… */}
+  //     </form>
+  //     <MarketingPanel />
+  //   </div>
+  // );
+  // -----------------------------------------------------------------------
 }
 
-function MarketingPanel() {
+/** Legacy split-screen marketing panel — exported (rather than just kept as
+ *  a local fn) so TypeScript doesn't flag it as unused dead code. Not
+ *  imported anywhere in the live app; bring it back by following the
+ *  LEGACY_SPLIT_LAYOUT comment in `LoginPage` above. */
+export function _MarketingPanel() {
   return (
     <aside
       className="hidden lg:flex flex-1 flex-col gap-6 p-20 rounded-[var(--radius-2xl)] bg-[var(--color-bg-surface)] border border-[var(--color-border)] overflow-clip relative"
@@ -1131,5 +1189,291 @@ function VerifyView({
         </button>
       </p>
     </>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Business information — post-verify onboarding step that captures the
+// merchant's legal/operational details before they land in the app.
+
+const BUSINESS_TYPES = [
+  "Sole proprietorship",
+  "LLC",
+  "C-Corporation",
+  "S-Corporation",
+  "Partnership",
+  "Nonprofit",
+] as const;
+
+interface BusinessInfo {
+  legalName: string;
+  dba: string;
+  ein: string;
+  businessType: string;
+  description: string;
+  phone: string;
+  stateOfIncorporation: string;
+  address1: string;
+  address2: string;
+  state: string;
+  zip: string;
+  country: string;
+}
+
+const EMPTY_BUSINESS_INFO: BusinessInfo = {
+  legalName: "",
+  dba: "",
+  ein: "",
+  businessType: "",
+  description: "",
+  phone: "",
+  stateOfIncorporation: "",
+  address1: "",
+  address2: "",
+  state: "",
+  zip: "",
+  country: "",
+};
+
+function BusinessInfoView({
+  onBack,
+  onNext,
+  onLogin,
+}: {
+  onBack: () => void;
+  onNext: () => void;
+  onLogin: () => void;
+}) {
+  const [info, setInfo] = useState<BusinessInfo>(EMPTY_BUSINESS_INFO);
+  const update =
+    <K extends keyof BusinessInfo>(key: K) =>
+    (value: BusinessInfo[K]) =>
+      setInfo((prev) => ({ ...prev, [key]: value }));
+
+  return (
+    <>
+      <ViewHeader
+        title="Business information"
+        subtitle="To set up your Outpave account, we need some business details."
+      />
+
+      <div className="flex flex-col gap-4 w-full">
+        <Field label="Business legal name">
+          <TextInput
+            value={info.legalName}
+            onChange={(e) => update("legalName")(e.target.value)}
+            placeholder="Clark Construction LLC"
+            autoComplete="organization"
+          />
+        </Field>
+
+        <Field label="Doing business as (DBA)">
+          <TextInput
+            value={info.dba}
+            onChange={(e) => update("dba")(e.target.value)}
+            placeholder="Clark Concrete"
+          />
+        </Field>
+
+        <Field label="Business EIN">
+          <TextInput
+            value={info.ein}
+            onChange={(e) => update("ein")(e.target.value)}
+            placeholder="12-3456789"
+            inputMode="numeric"
+          />
+        </Field>
+
+        <Field label="Business type">
+          <SelectInput
+            value={info.businessType}
+            onChange={update("businessType")}
+            placeholder="Choose a business type"
+            options={BUSINESS_TYPES.map((t) => ({ value: t, label: t }))}
+          />
+        </Field>
+
+        <Field label="Business description">
+          <textarea
+            value={info.description}
+            onChange={(e) => update("description")(e.target.value)}
+            placeholder="Concrete and paving contractor serving the greater Nashville area"
+            rows={3}
+            className="resize-none min-h-24 px-4 py-3 rounded-xl bg-[var(--color-bg-surface)] text-base text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none border border-[var(--color-border)] focus:border-[var(--color-border-focus)] transition-colors"
+          />
+        </Field>
+
+        <Field label="Business phone number">
+          <PhoneInput
+            value={info.phone}
+            onChange={update("phone")}
+            placeholder="(555) 123-4567"
+          />
+        </Field>
+
+        <Field label="State of incorporation">
+          <TextInput
+            value={info.stateOfIncorporation}
+            onChange={(e) => update("stateOfIncorporation")(e.target.value)}
+            placeholder="Tennessee"
+          />
+        </Field>
+      </div>
+
+      <div className="flex flex-col gap-2 w-full pt-2">
+        <h2 className="text-[22px] font-medium tracking-tight text-[var(--color-text-primary)]">
+          Business address
+        </h2>
+        <p className="text-sm text-[var(--color-text-secondary)] leading-snug">
+          This is the physical location of your business.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-4 w-full">
+        <Field label="Address 1">
+          <TextInput
+            value={info.address1}
+            onChange={(e) => update("address1")(e.target.value)}
+            placeholder="123 Main St"
+            autoComplete="address-line1"
+          />
+        </Field>
+
+        <Field label="Address 2 (optional)">
+          <TextInput
+            value={info.address2}
+            onChange={(e) => update("address2")(e.target.value)}
+            placeholder="Suite 100"
+            autoComplete="address-line2"
+          />
+        </Field>
+
+        <div className="flex gap-3 w-full">
+          <Field label="State" className="flex-1">
+            <TextInput
+              value={info.state}
+              onChange={(e) => update("state")(e.target.value)}
+              placeholder="TN"
+              autoComplete="address-level1"
+            />
+          </Field>
+          <Field label="ZIP" className="flex-1">
+            <TextInput
+              value={info.zip}
+              onChange={(e) => update("zip")(e.target.value)}
+              placeholder="37201"
+              inputMode="numeric"
+              autoComplete="postal-code"
+            />
+          </Field>
+          <Field label="Country" className="flex-1">
+            <TextInput
+              value={info.country}
+              onChange={(e) => update("country")(e.target.value)}
+              placeholder="United States"
+              autoComplete="country-name"
+            />
+          </Field>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2 w-full">
+        <Button type="button" variant="primary" className="w-full" onClick={onNext}>
+          Next
+        </Button>
+        <Button type="button" variant="secondary" className="w-full" onClick={onBack}>
+          Previous
+        </Button>
+      </div>
+
+      <p className="text-sm text-[var(--color-text-secondary)] flex items-center gap-1">
+        Already have an account?
+        <button
+          type="button"
+          onClick={onLogin}
+          className="font-semibold text-[var(--color-brand)] hover:underline cursor-pointer"
+        >
+          Sign in
+        </button>
+      </p>
+    </>
+  );
+}
+
+function Field({
+  label,
+  children,
+  className = "",
+}: {
+  label: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <label className={`flex flex-col gap-1.5 w-full ${className}`}>
+      <FieldLabel>{label}</FieldLabel>
+      {children}
+    </label>
+  );
+}
+
+function SelectInput({
+  value,
+  onChange,
+  placeholder,
+  options,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <div className="relative h-11">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`w-full h-11 pl-4 pr-10 rounded-xl bg-[var(--color-bg-surface)] text-base outline-none border border-[var(--color-border)] focus:border-[var(--color-border-focus)] transition-colors appearance-none cursor-pointer ${
+          value ? "text-[var(--color-text-primary)]" : "text-[var(--color-text-tertiary)]"
+        }`}
+      >
+        <option value="" disabled>
+          {placeholder}
+        </option>
+        {options.map((o) => (
+          <option key={o.value} value={o.value} className="text-[var(--color-text-primary)]">
+            {o.label}
+          </option>
+        ))}
+      </select>
+      <ChevronDown
+        size={20}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-icon-secondary)] pointer-events-none"
+      />
+    </div>
+  );
+}
+
+function PhoneInput({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <div className="h-11 px-4 rounded-xl bg-[var(--color-bg-surface)] flex items-center gap-2 border border-[var(--color-border)] focus-within:border-[var(--color-border-focus)] transition-colors">
+      <span className="text-base text-[var(--color-text-primary)] shrink-0">+1</span>
+      <input
+        type="tel"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        autoComplete="tel-national"
+        className="flex-1 min-w-0 bg-transparent text-base text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none"
+      />
+    </div>
   );
 }

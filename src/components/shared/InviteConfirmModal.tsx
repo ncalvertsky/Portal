@@ -124,7 +124,7 @@ export default function InviteConfirmModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="invite-confirm-title"
-        className="relative w-full max-w-[480px] bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-[28px] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] flex flex-col gap-6 p-6"
+        className="relative w-full max-w-[480px] bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-2xl shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] flex flex-col gap-6 p-6"
       >
         {/* Header */}
         <div className="flex flex-col gap-1.5">
@@ -145,7 +145,7 @@ export default function InviteConfirmModal({
             <label className="text-[13px] font-medium text-[var(--color-text-primary)]">
               Email address
             </label>
-            <div className="min-h-12 px-2.5 py-2 rounded-3xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex flex-wrap gap-2 items-center focus-within:border-[var(--color-border-focus)] transition-colors">
+            <div className="min-h-12 px-2.5 py-2 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex flex-wrap gap-2 items-center focus-within:border-[var(--color-border-focus)] transition-colors">
               {selectedPeople.map((person) => (
                 <SelectedChip
                   key={person.id}
@@ -227,7 +227,7 @@ export default function InviteConfirmModal({
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Add a note to your invitation…"
             rows={3}
-            className="resize-none min-h-20 px-4 py-3 rounded-3xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none focus:border-[var(--color-border-focus)] transition-colors"
+            className="resize-none min-h-20 px-4 py-3 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none focus:border-[var(--color-border-focus)] transition-colors"
           />
         </div>
 
@@ -271,7 +271,7 @@ function SelectedChip({
       <button
         type="button"
         onClick={onRemove}
-        className="group inline-flex items-center gap-1 pl-2 pr-3 py-2 rounded-3xl bg-[var(--color-bg-elevated)] border border-[var(--color-border)] text-xs text-[var(--color-text-primary)] hover:bg-[var(--color-bg-surface)] transition-colors cursor-pointer"
+        className="group inline-flex items-center gap-1 pl-2 pr-3 py-2 rounded-2xl bg-[var(--color-bg-elevated)] border border-[var(--color-border)] text-xs text-[var(--color-text-primary)] hover:bg-[var(--color-bg-surface)] transition-colors cursor-pointer"
         aria-label={`Remove ${person.name}`}
       >
         <X
@@ -299,7 +299,7 @@ function AddChip({
         type="button"
         onClick={onAdd}
         disabled={disabled}
-        className="inline-flex items-center gap-1 pl-2 pr-3 py-2 rounded-3xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] text-xs text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        className="inline-flex items-center gap-1 pl-2 pr-3 py-2 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] text-xs text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Plus size={12} className="text-[var(--color-icon-secondary)]" />
         <span className="leading-tight">{person.name}</span>

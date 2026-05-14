@@ -49,7 +49,7 @@ export default function SortDropdown<Id extends string = string>({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-[280px] rounded-[28px] bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] p-2 z-20">
+        <div className="absolute right-0 top-full mt-2 w-[280px] rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] p-2 z-20">
           {options.map((option) => {
             const isActive = option.id === value;
             return (

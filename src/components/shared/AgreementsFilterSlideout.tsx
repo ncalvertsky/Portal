@@ -44,7 +44,6 @@ function toggle<T>(arr: T[], value: T): T[] {
 
 interface Props {
   open: boolean;
-  merchants: string[];
   value: AgreementsFilterState;
   onClose: () => void;
   onApply: (filters: AgreementsFilterState) => void;
@@ -52,7 +51,6 @@ interface Props {
 
 export default function AgreementsFilterSlideout({
   open,
-  merchants,
   value,
   onClose,
   onApply,
@@ -116,15 +114,7 @@ export default function AgreementsFilterSlideout({
             </div>
           </Section>
 
-          <Section title="Merchant">
-            <CheckboxList
-              options={merchants.map((m) => ({ id: m, label: m }))}
-              selected={draft.merchants}
-              onToggle={(id) =>
-                setDraft((d) => ({ ...d, merchants: toggle(d.merchants, id) }))
-              }
-            />
-          </Section>
+          {/* Merchant section removed — all rows are from Silvi Materials. */}
 
           <Section title="Linked to payment">
             <CheckboxList

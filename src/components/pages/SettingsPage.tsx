@@ -37,7 +37,7 @@ export default function SettingsPage({ onNavigate, onLogout }: SettingsPageProps
     <DashboardLayout
       logo={<BrandLogo />}
       navItems={settingsNavItems}
-      sidebarFooter={<SidebarCTA />}
+      sidebarFooter={<SidebarCTA onGetStarted={() => onNavigate?.("merchant-signup")} />}
       showLogout={false}
       onNavigate={onNavigate}
       onLogout={onLogout}
@@ -87,7 +87,7 @@ function ProfileTab() {
 function ProfileBlock() {
   const [editOpen, setEditOpen] = useState(false);
   return (
-    <div className="w-full rounded-3xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col gap-4">
+    <div className="w-full rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col gap-4">
       <div className="flex items-start justify-between pb-2">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <div className="size-11 rounded-full bg-[var(--color-bg-elevated)] flex items-center justify-center shrink-0">
@@ -134,7 +134,7 @@ function PasswordBlock() {
   const [visible, setVisible] = useState(false);
   const [changeOpen, setChangeOpen] = useState(false);
   return (
-    <div className="w-full rounded-3xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col gap-4">
+    <div className="w-full rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col gap-4">
       <div className="flex items-start justify-between pb-2">
         <h2 className="text-xl font-medium tracking-tight text-[var(--color-text-primary)] leading-none h-10 flex items-center">
           Password
@@ -171,7 +171,7 @@ const THEME_OPTIONS: { mode: ThemeMode; label: string; icon: typeof Sun }[] = [
 function ThemeBlock() {
   const { themeMode, setThemeMode } = useTheme();
   return (
-    <div className="w-full rounded-3xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col gap-4">
+    <div className="w-full rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col gap-4">
       <div className="flex items-start justify-between pb-2">
         <h2 className="text-xl font-medium tracking-tight text-[var(--color-text-primary)] leading-none h-10 flex items-center">
           Theme
@@ -187,7 +187,7 @@ function ThemeBlock() {
               type="button"
               onClick={() => setThemeMode(mode)}
               aria-pressed={active}
-              className={`size-[100px] rounded-[20px] border flex flex-col items-center justify-center gap-3 px-4 py-4 transition-colors cursor-pointer ${
+              className={`size-[100px] rounded-xl border flex flex-col items-center justify-center gap-3 px-4 py-4 transition-colors cursor-pointer ${
                 active
                   ? "bg-[var(--color-brand-8)] border-[var(--color-brand)] text-[var(--color-text-primary)]"
                   : "bg-[var(--color-bg-surface)] border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)]"
@@ -229,7 +229,7 @@ function PaymentMethodsBlock() {
   };
 
   return (
-    <div className="w-full max-w-[680px] rounded-3xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col gap-4 self-start">
+    <div className="w-full max-w-[680px] rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col gap-4 self-start">
       <div className="flex items-start justify-between pb-2">
         <h2 className="text-xl font-medium tracking-tight text-[var(--color-text-primary)] leading-none h-10 flex items-center">
           Cards & Bank accounts
@@ -381,7 +381,7 @@ function PaymentMethodMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full mt-1 z-30 w-[220px] rounded-[28px] bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] p-2"
+          className="absolute right-0 top-full mt-1 z-30 w-[220px] rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] p-2"
         >
           <button
             type="button"
@@ -445,7 +445,7 @@ function DeletePaymentMethodModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-pm-title"
-        className="relative w-full max-w-[400px] rounded-[28px] bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] p-6 flex flex-col gap-6"
+        className="relative w-full max-w-[400px] rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-[0_16px_32px_rgba(0,0,0,0.1),0_4px_8px_rgba(0,0,0,0.08)] p-6 flex flex-col gap-6"
       >
         <button
           type="button"
@@ -557,7 +557,7 @@ function NotificationPreferencesBlock({
   const allSms = notificationRows.every((row) => prefs[row.id].sms);
   const allEmail = notificationRows.every((row) => prefs[row.id].email);
   return (
-    <div className="w-full rounded-3xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col gap-4">
+    <div className="w-full rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col gap-4">
       <div className="flex items-start justify-between pb-2">
         <h2 className="text-xl font-medium tracking-tight text-[var(--color-text-primary)] leading-none h-10 flex items-center">
           Notifications

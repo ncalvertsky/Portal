@@ -9,7 +9,7 @@
 :root,
 [data-theme="dark"] {
   --color-bg-page: #11151d;
-  --color-bg-elevated: #374151;
+  --color-bg-elevated: #1d2633;
   --color-bg-surface: #151c29;
   --color-bg-disabled: #6b7280;
   --color-bg-brand-subtle: #331005;
@@ -32,8 +32,8 @@
   --color-border: #2a3750;
   --color-border-strong: #6b7280;
   --color-border-subtle: #151c29;
-  --color-border-brand: #fd6f43;
-  --color-border-focus: #fd6f43;
+  /* --color-border-brand and --color-border-focus are brand-specific —
+     defined in each [data-brand="..."] block below. */
   --color-border-danger: #dc2626;
   --color-border-inverse: #ffffff;
 
@@ -78,7 +78,7 @@
    * states. */
   --color-bg-page: #f8f9fa;
   --color-bg-surface: #ffffff;
-  --color-bg-elevated: #e6e9eb;
+  --color-bg-elevated: #f2f2f7;
   --color-bg-brand-subtle: #f7d4c9;
   --color-bg-danger: #fee2e2;
   --color-bg-warning: #fbc1af;
@@ -99,7 +99,8 @@
   --color-border: #e6e9eb;
   --color-border-strong: #adadaa;
   --color-border-subtle: #f2f2f7;
-  --color-border-focus: #ff4e17;
+  /* --color-border-brand and --color-border-focus live in the brand
+     blocks below so they swap with the active brand. */
   --color-border-danger: #dc2626;
   --color-border-inverse: #1e1e2e;
 
@@ -159,6 +160,9 @@
   --color-brand-20: #0071e333;
   --color-brand-8: #0071e314;
 
+  --color-border-brand: #0071e3;
+  --color-border-focus: #0071e3;
+
   --font-family-sans: "Inter", sans-serif;
 
   --radius-xs: 4px;
@@ -170,10 +174,17 @@
 }
 
 [data-brand="fractal"] {
-  --color-brand: #61c699;
-  --color-brand-50: #61c69980;
-  --color-brand-20: #61c69933;
-  --color-brand-8: #61c69914;
+  /* Fractal brand — defaults are the LIGHT-mode values from the Customer
+   * Portal Fractal variables (1291:93886). `color/brand/primary` is the
+   * deep purple 900 (#221730). Border-brand / focus step up to the
+   * `color/bg/brand` lighter purple (#a788d1) for focus-ring visibility. */
+  --color-brand: #7B5FB0;
+  --color-brand-50: #7B5FB080;
+  --color-brand-20: #7B5FB033;
+  --color-brand-8: #7B5FB014;
+
+  --color-border-brand: #a788d1;
+  --color-border-focus: #a788d1;
 
   --font-family-sans: "Inter", sans-serif;
 
@@ -185,6 +196,46 @@
   --radius-2xl: 28px;
 }
 
+/* Fractal light — lavender canvas + purple-tinted neutrals. Pulled from
+ * the Customer-Portal Fractal light variable mode (1291:93886):
+ *   color/bg/page          #f9f5ff
+ *   color/border/default   #e5e0ef
+ *   color/text/tertiary    #867c94
+ */
+[data-brand="fractal"][data-theme="light"] {
+  --color-bg-page: #f9f5ff;
+  --color-border: #e5e0ef;
+  --color-text-tertiary: #867c94;
+}
+
+/* Fractal dark — purple-tinted neutrals + a brighter primary so brand
+ * surfaces still read against the dark canvas. Pulled from the
+ * Customer-Portal Fractal dark variable mode (1253:121692):
+ *   color/bg/page          #0d0a14
+ *   color/bg/surface       #16111f
+ *   color/border/default   #3a2e4d
+ *   color/text/tertiary    #b5adc4
+ *   color/bg/brand         #a788d1   (used as the visible brand here)
+ *   color/text/brand       #c7b4e8
+ *
+ * The deep #221730 primary disappears on a near-black canvas, so the dark
+ * mode swaps `--color-brand` to the lighter `#a788d1` from the design
+ * system. Filled buttons / active nav / corner-radius squares all pick
+ * this up automatically.
+ */
+[data-brand="fractal"]:not([data-theme="light"]) {
+  --color-bg-page: #0d0a14;
+  --color-bg-surface: #16111f;
+  --color-bg-elevated: #231a30;
+  --color-border: #3a2e4d;
+  --color-text-tertiary: #b5adc4;
+
+  --color-brand: #a788d1;
+  --color-brand-50: #a788d180;
+  --color-brand-20: #a788d133;
+  --color-brand-8: #a788d114;
+}
+
 [data-brand="outpave"] {
   --color-brand: #ff4e17;
   --color-brand-hover: #992f0e;
@@ -194,6 +245,9 @@
   --color-brand-12: #ff4e171f;
   --color-brand-8: #ff4e1714;
 
+  --color-border-brand: #fd6f43;
+  --color-border-focus: #fd6f43;
+
   --font-family-sans: "Figtree", "Inter", sans-serif;
 
   --radius-xs: 4px;
@@ -202,6 +256,48 @@
   --radius-lg: 16px;
   --radius-xl: 20px;
   --radius-2xl: 28px;
+}
+
+/* White-label brand — pulled from the Design System (`6-81160`) Brand
+ * collection's "white-label" mode. The accent swaps to mustard/amber and
+ * the dark-mode neutral palette swaps from cool-steel to warm-teal so the
+ * page reads as a different product, not just a recolor. */
+[data-brand="white-label"] {
+  --color-brand: #f59e0b;
+  --color-brand-hover: #d97706;
+  --color-brand-300: #fcd34d;
+  --color-brand-50: #f59e0b80;
+  --color-brand-20: #f59e0b33;
+  --color-brand-12: #f59e0b1f;
+  --color-brand-8: #f59e0b14;
+
+  --color-border-brand: #fbbf24;
+  --color-border-focus: #fbbf24;
+  --color-bg-brand-subtle: #78350f;
+
+  --font-family-sans: "Inter", sans-serif;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+}
+
+/* White-label dark — swap the cool-steel neutrals for warm-teal so the
+ * surface tones match the brand. */
+[data-brand="white-label"]:not([data-theme="light"]) {
+  --color-bg-page: #091820;
+  --color-bg-surface: #0d1e28;
+  --color-bg-elevated: #152a36;
+  --color-border: #1d3340;
+}
+
+/* White-label light — only the elevated bg differs from the default light
+ * theme (warm grey instead of cool grey). */
+[data-brand="white-label"][data-theme="light"] {
+  --color-bg-elevated: #f2f4f5;
 }
 
 /* Mono stays constant across brands for now (per intent). */
@@ -245,14 +341,15 @@ body {
 
 /* Browser autofill — Chrome/Safari paint their own pale background and
    black text on autofilled inputs, ignoring our token colors. The inset
-   box-shadow trick masks that with bg-elevated, and `-webkit-text-fill-color`
-   overrides the text. */
+   box-shadow trick masks that. `--field-bg` is set by Field.tsx so the
+   mask follows hover/focus state changes; `--color-bg-surface` is the
+   fallback for inputs that aren't inside a Field container. */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-text-fill-color: var(--color-text-primary);
-  -webkit-box-shadow: 0 0 0 1000px var(--color-bg-surface) inset;
+  -webkit-box-shadow: 0 0 0 1000px var(--field-bg, var(--color-bg-surface)) inset;
   caret-color: var(--color-text-primary);
   transition: background-color 9999s ease-out 0s;
 }

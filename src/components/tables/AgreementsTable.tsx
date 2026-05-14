@@ -2,6 +2,10 @@ import { Fragment } from "react";
 import { AlertCircle, FileEdit } from "lucide-react";
 import type { AgreementRow, AgreementStatus } from "../../data/mockData";
 import Tooltip from "../shared/Tooltip";
+import SortableHeader, {
+  type SortDirectionLabels,
+  type SortState,
+} from "../shared/SortableHeader";
 
 const AGREEMENT_TOOLTIPS: Partial<Record<AgreementStatus, string>> = {
   "due-soon":
@@ -10,10 +14,25 @@ const AGREEMENT_TOOLTIPS: Partial<Record<AgreementStatus, string>> = {
     "This agreement is past due. Sign now to release the payment and avoid late fees.",
 };
 
+export type AgreementColumnId =
+  | "type"
+  | "issueDate"
+  | "signingDate"
+  | "amount";
+
+const SORT_LABELS: Record<AgreementColumnId, SortDirectionLabels> = {
+  type: { asc: "A-Z", desc: "Z-A" },
+  issueDate: { asc: "Oldest to newest", desc: "Newest to oldest" },
+  signingDate: { asc: "Oldest to newest", desc: "Newest to oldest" },
+  amount: { asc: "Lowest to highest", desc: "Highest to lowest" },
+};
+
 interface AgreementsTableProps {
   rows: AgreementRow[];
   onAction?: (row: AgreementRow) => void;
   onViewRequest?: (reference: string) => void;
+  sortState?: SortState | null;
+  onSortChange?: (next: SortState | null) => void;
 }
 
 /**
@@ -90,7 +109,24 @@ export default function AgreementsTable({
   rows,
   onAction,
   onViewRequest,
+  sortState = null,
+  onSortChange,
 }: AgreementsTableProps) {
+  const renderHeader = (
+    col: AgreementColumnId,
+    label: string,
+    align: "left" | "right" | "center" = "left",
+  ) => (
+    <SortableHeader
+      label={label}
+      sortKey={col}
+      sortState={sortState}
+      onSort={(next) => onSortChange?.(next)}
+      labels={SORT_LABELS[col]}
+      align={align}
+    />
+  );
+
   return (
     // Vertical scrolling is owned by the page-level scroll container in
     // `DashboardLayout`. Here we only enable horizontal scroll on desktop so
@@ -105,12 +141,24 @@ export default function AgreementsTable({
         <div
           className={`hidden md:grid ${GRID} gap-4 items-center px-3 py-2 border-b border-[var(--color-border)]`}
         >
-          <HeaderCell>Type</HeaderCell>
-          <HeaderCell>Order type</HeaderCell>
-          <HeaderCell>Issue / Due date</HeaderCell>
-          <HeaderCell>Signing date</HeaderCell>
-          <HeaderCell className="justify-end">Total amount</HeaderCell>
-          <HeaderCell className="justify-center">Status</HeaderCell>
+          {renderHeader("type", "Type")}
+          {/* Order type — non-sortable. Mirrors SortableHeader's typography +
+              padding so the column data lines up. */}
+          <div className="flex items-center">
+            <span className="h-7 inline-flex items-center px-1.5 text-sm font-medium tracking-tight text-[var(--color-text-secondary)]">
+              Order type
+            </span>
+          </div>
+          {renderHeader("issueDate", "Issue / Due date")}
+          {renderHeader("signingDate", "Signing date")}
+          {renderHeader("amount", "Total amount", "right")}
+          {/* Status — non-sortable. Mirrors SortableHeader's typography +
+              padding so the column data lines up. */}
+          <div className="flex items-center justify-center">
+            <span className="h-7 inline-flex items-center px-1.5 text-sm font-medium tracking-tight text-[var(--color-text-secondary)]">
+              Status
+            </span>
+          </div>
           <div />
         </div>
 
@@ -120,7 +168,7 @@ export default function AgreementsTable({
             <div
               className={`hidden md:grid ${GRID} gap-4 items-center px-3 h-[52px] border-b border-[var(--color-border)] hover:bg-[var(--color-bg-elevated)] transition-colors shrink-0`}
             >
-              <div className="flex items-center gap-3 min-w-0">
+              <div className="flex items-center gap-3 min-w-0 px-1.5">
                 <div className="size-9 rounded-full border border-[var(--color-border)] bg-[var(--color-bg-surface)] text-[var(--color-icon-default)] flex items-center justify-center shrink-0">
                   <FileEdit size={16} />
                 </div>
@@ -134,7 +182,7 @@ export default function AgreementsTable({
                 </div>
               </div>
 
-              <div className="text-sm min-w-0 truncate">
+              <div className="text-sm min-w-0 truncate px-1.5">
                 {row.orderType ? (
                   onViewRequest ? (
                     <button
@@ -152,17 +200,17 @@ export default function AgreementsTable({
                 )}
               </div>
 
-              <div className="text-sm text-[var(--color-text-primary)]">
+              <div className="text-sm text-[var(--color-text-primary)] px-1.5">
                 {row.issueDate} / {row.dueDate ?? "—"}
               </div>
 
-              <div className="text-sm text-[var(--color-text-primary)]">
+              <div className="text-sm text-[var(--color-text-primary)] px-1.5">
                 {row.signingDate ?? (
                   <span className="text-[var(--color-text-secondary)]">—</span>
                 )}
               </div>
 
-              <div className="text-sm font-semibold text-[var(--color-text-primary)] text-right tabular-nums">
+              <div className="text-sm font-semibold text-[var(--color-text-primary)] text-right tabular-nums px-1.5">
                 {row.amount ? (
                   row.paidAmount ? (
                     <>
@@ -179,7 +227,7 @@ export default function AgreementsTable({
                 )}
               </div>
 
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center px-1.5">
                 <StatusCell status={row.status} label={row.statusLabel} />
               </div>
 
@@ -238,18 +286,3 @@ export default function AgreementsTable({
   );
 }
 
-function HeaderCell({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`text-sm font-medium text-[var(--color-text-secondary)] flex items-center ${className}`}
-    >
-      {children}
-    </div>
-  );
-}

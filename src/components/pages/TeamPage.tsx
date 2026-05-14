@@ -62,7 +62,7 @@ export default function TeamPage({ onNavigate, onLogout }: TeamPageProps = {}) {
     <DashboardLayout
       logo={<BrandLogo />}
       navItems={teamNavItems}
-      sidebarFooter={<SidebarCTA />}
+      sidebarFooter={<SidebarCTA onGetStarted={() => onNavigate?.("merchant-signup")} />}
       showLogout={false}
       onNavigate={onNavigate}
       onLogout={onLogout}
@@ -136,7 +136,7 @@ export default function TeamPage({ onNavigate, onLogout }: TeamPageProps = {}) {
           />
           <button
             type="button"
-            className="size-11 rounded-full bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-icon-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] active:border-[var(--color-border-strong)] focus-visible:outline-none focus-visible:border-[var(--color-border-focus)] transition-colors cursor-pointer shrink-0"
+            className="size-11 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-icon-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] active:border-[var(--color-border-strong)] focus-visible:outline-none focus-visible:border-[var(--color-border-focus)] transition-colors cursor-pointer shrink-0"
             aria-label="Filter team"
           >
             <SlidersHorizontal size={20} />
@@ -147,7 +147,7 @@ export default function TeamPage({ onNavigate, onLogout }: TeamPageProps = {}) {
           type="button"
           onClick={() => openConfirm([])}
           aria-label="Invite member"
-          className="md:hidden size-11 rounded-full bg-[var(--color-brand)] text-[var(--color-text-on-brand)] flex items-center justify-center shrink-0 cursor-pointer hover:bg-[color-mix(in_srgb,var(--color-brand)_85%,white)] transition-colors"
+          className="md:hidden size-11 rounded-2xl bg-[var(--color-brand)] text-[var(--color-text-on-brand)] flex items-center justify-center shrink-0 cursor-pointer hover:bg-[color-mix(in_srgb,var(--color-brand)_85%,white)] transition-colors"
         >
           <Plus size={20} />
         </button>
@@ -163,7 +163,7 @@ export default function TeamPage({ onNavigate, onLogout }: TeamPageProps = {}) {
       </div>
 
       {/* Table — same grid + row pattern as Payments / Agreements tables. */}
-      <div className="w-full overflow-hidden shrink-0 bg-[var(--color-bg-surface)] rounded-[13px] border border-[var(--color-border)] md:overflow-x-auto md:rounded-lg">
+      <div className="w-full overflow-hidden shrink-0 bg-[var(--color-bg-surface)] rounded-md border border-[var(--color-border)] md:overflow-x-auto md:rounded-lg">
         <div className="flex flex-col md:min-w-[1000px]">
           {/* Desktop header */}
           <div
@@ -213,7 +213,7 @@ function SuggestionCard({
   onInvite: () => void;
 }) {
   return (
-    <div className="shrink-0 flex items-center gap-3 p-2 rounded-[28px] bg-[var(--color-bg-surface)] border border-[var(--color-border)]">
+    <div className="shrink-0 flex items-center gap-3 p-2 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)]">
       <button
         type="button"
         aria-label={`Invite ${person.name}`}

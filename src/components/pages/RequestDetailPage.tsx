@@ -257,7 +257,7 @@ export default function RequestDetailPage({
       <DashboardLayout
         logo={<BrandLogo />}
         navItems={paymentsNavItems}
-        sidebarFooter={<SidebarCTA />}
+        sidebarFooter={<SidebarCTA onGetStarted={() => onNavigate?.("merchant-signup")} />}
         showLogout={false}
         onNavigate={onNavigate}
         onLogout={onLogout}
@@ -301,7 +301,7 @@ export default function RequestDetailPage({
     <DashboardLayout
       logo={<BrandLogo />}
       navItems={paymentsNavItems}
-      sidebarFooter={<SidebarCTA />}
+      sidebarFooter={<SidebarCTA onGetStarted={() => onNavigate?.("merchant-signup")} />}
       showLogout={false}
       onNavigate={onNavigate}
       onLogout={onLogout}
@@ -366,7 +366,7 @@ export default function RequestDetailPage({
         </div>
 
         {/* Products card */}
-        <div className="w-full rounded-3xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col gap-2">
+        <div className="w-full rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col gap-2">
           <div className="flex items-start justify-between pb-2">
             <h2 className="text-xl font-medium tracking-tight text-[var(--color-text-primary)] leading-none h-10 flex items-center">
               Products
@@ -412,7 +412,7 @@ export default function RequestDetailPage({
         </div>
 
         {/* Totals card */}
-        <div className="w-full rounded-3xl bg-[var(--color-bg-surface)] px-6 pt-6 pb-5 flex flex-col gap-5">
+        <div className="w-full rounded-2xl bg-[var(--color-bg-surface)] px-6 pt-6 pb-5 flex flex-col gap-5">
           <div className="flex flex-col gap-3">
             <TotalsRow label="Subtotal" value={`$${formatMoney(totals.subtotal)}`} />
             <TotalsRow label="Discount" value={`−$${formatMoney(totals.discount)}`} />
@@ -496,7 +496,7 @@ function InfoCard({
   items: { label: string; value: string }[];
 }) {
   return (
-    <div className="w-full rounded-3xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col">
+    <div className="w-full rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col">
       <div className="flex items-start justify-between pb-2">
         <h2 className="text-xl font-medium tracking-tight text-[var(--color-text-primary)] leading-none h-10 flex items-center">
           {title}
@@ -549,7 +549,7 @@ function FileCard({
   files: AttachmentFile[];
 }) {
   return (
-    <div className="w-full rounded-3xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col">
+    <div className="w-full rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-6 pt-6 pb-5 flex flex-col">
       <div className="flex items-start justify-between pb-2">
         <h2 className="text-xl font-medium tracking-tight text-[var(--color-text-primary)] leading-none h-10 flex items-center">
           {title}

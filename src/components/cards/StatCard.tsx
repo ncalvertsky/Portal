@@ -21,7 +21,7 @@ export default function StatCard({ data, variant = "default" }: StatCardProps) {
 
   return (
     <div
-      className={`${bgClass} rounded-[16px] xl:rounded-[20px] px-4 xl:px-6 py-3 xl:py-4 flex flex-col ${variant === "inner" ? "justify-between" : "gap-2 xl:gap-3"} h-full min-w-0 cursor-pointer transition-colors duration-150`}
+      className={`${bgClass} rounded-lg xl:rounded-xl px-4 xl:px-6 py-3 xl:py-4 flex flex-col ${variant === "inner" ? "justify-between" : "gap-2 xl:gap-3"} h-full min-w-0 cursor-pointer transition-colors duration-150`}
     >
       <div className="flex flex-col gap-2 xl:gap-3">
         <div className="flex items-center justify-between">

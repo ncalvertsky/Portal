@@ -1,12 +1,20 @@
 import { useMemo, useState } from "react";
-import { SlidersHorizontal, RefreshCw, CalendarX, Clock } from "lucide-react";
+import { SlidersHorizontal, RefreshCw, CalendarX, Clock, Search } from "lucide-react";
 import type { SummaryCardTone } from "../shared/SummaryCard";
 import DashboardLayout from "../layout/DashboardLayout";
 import BrandLogo from "../shared/BrandLogo";
 import SidebarCTA from "../shared/SidebarCTA";
 import SearchBar from "../shared/SearchBar";
 import Tabs from "../shared/Tabs";
-import SortDropdown, { type SortOption } from "../shared/SortDropdown";
+import FilterPopover from "../shared/FilterPopover";
+import { type SortState } from "../shared/SortableHeader";
+import {
+  AmountInput,
+  DateFieldGroup,
+  PresetMenu,
+  detectPreset,
+  presetRange,
+} from "../shared/FilterFields";
 import AgreementsFilterSlideout, {
   emptyAgreementsFilters,
   applyAgreementFilters,
@@ -43,27 +51,73 @@ const agreementSummaryMeta: Record<
   "due-soon": { icon: Clock, tone: "warning" },
 };
 
-type SortId = "newest" | "oldest";
-
-const sortOptions: SortOption<SortId>[] = [
-  { id: "newest", label: "Newest first" },
-  { id: "oldest", label: "Oldest first" },
-];
-
 function parseIssueDate(s: string): number {
   const [mm, dd, yy] = s.split("-").map((p) => parseInt(p, 10));
   return new Date(2000 + yy, mm - 1, dd).getTime();
 }
 
-function sortRows(rows: AgreementRow[], sort: SortId): AgreementRow[] {
-  const copy = [...rows];
-  return copy.sort((a, b) => {
-    const diff = parseIssueDate(a.issueDate) - parseIssueDate(b.issueDate);
-    return sort === "oldest" ? diff : -diff;
-  });
+function parseDateOrNull(s: string | null): number | null {
+  if (!s) return null;
+  return parseIssueDate(s);
 }
 
-const uniqueMerchants = Array.from(new Set(agreementRows.map((r) => r.customer)));
+function sortByNewest(rows: AgreementRow[]): AgreementRow[] {
+  return [...rows].sort(
+    (a, b) => parseIssueDate(b.issueDate) - parseIssueDate(a.issueDate),
+  );
+}
+
+/** Compare two rows by a sort key. Nulls always sort last regardless of dir. */
+function compareByKey(a: AgreementRow, b: AgreementRow, key: string): number {
+  switch (key) {
+    case "type":
+      return a.type.localeCompare(b.type);
+    case "issueDate":
+      return parseIssueDate(a.issueDate) - parseIssueDate(b.issueDate);
+    case "signingDate": {
+      const av = parseDateOrNull(a.signingDate);
+      const bv = parseDateOrNull(b.signingDate);
+      if (av === null && bv === null) return 0;
+      if (av === null) return 1;
+      if (bv === null) return -1;
+      return av - bv;
+    }
+    case "amount": {
+      const av = a.amount ? parseFloat(a.amount.replace(/[$,]/g, "")) : null;
+      const bv = b.amount ? parseFloat(b.amount.replace(/[$,]/g, "")) : null;
+      if (av === null && bv === null) return 0;
+      if (av === null) return 1;
+      if (bv === null) return -1;
+      return av - bv;
+    }
+    default:
+      return 0;
+  }
+}
+
+function applySort(rows: AgreementRow[], state: SortState | null): AgreementRow[] {
+  if (!state) return sortByNewest(rows);
+  const sign = state.direction === "asc" ? 1 : -1;
+  return [...rows].sort((a, b) => sign * compareByKey(a, b, state.key));
+}
+
+function parseAmount(s: string): number {
+  return parseFloat(s.replace(/[$,]/g, "")) || 0;
+}
+
+function formatAmount(n: number): string {
+  return n.toLocaleString("en-US", { maximumFractionDigits: 0 });
+}
+
+function amountLabel(min: string, max: string): string {
+  const minN = min ? parseAmount(min) : null;
+  const maxN = max ? parseAmount(max) : null;
+  if (minN !== null && maxN !== null)
+    return `$${formatAmount(minN)} – $${formatAmount(maxN)}`;
+  if (minN !== null) return `From $${formatAmount(minN)}`;
+  if (maxN !== null) return `Up to $${formatAmount(maxN)}`;
+  return "Amount";
+}
 
 function matchesSummary(row: AgreementRow, filter: AgreementSummaryFilter): boolean {
   // "Awaiting signature" covers anything not yet signed — plain "to-sign" rows
@@ -87,8 +141,9 @@ export default function AgreementsPage({
   onViewRequest,
 }: AgreementsPageProps = {}) {
   const [activeTab, setActiveTab] = useState<AgreementsFilterTab>("all");
-  const [sort, setSort] = useState<SortId>("newest");
   const [search, setSearch] = useState("");
+  const [tabletSearchOpen, setTabletSearchOpen] = useState(false);
+  const [sortState, setSortState] = useState<SortState | null>(null);
   const [filters, setFilters] = useState<AgreementsFilterState>(emptyAgreementsFilters);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [summaryFilter, setSummaryFilter] = useState<AgreementSummaryFilter | null>(null);
@@ -126,14 +181,14 @@ export default function AgreementsPage({
 
     rows = applyAgreementFilters(rows, filters);
 
-    return sortRows(rows, sort);
-  }, [activeTab, sort, search, filters, summaryFilter]);
+    return applySort(rows, sortState);
+  }, [activeTab, search, filters, summaryFilter, sortState]);
 
   return (
     <DashboardLayout
       logo={<BrandLogo />}
       navItems={agreementsNavItems}
-      sidebarFooter={<SidebarCTA />}
+      sidebarFooter={<SidebarCTA onGetStarted={() => onNavigate?.("merchant-signup")} />}
       showLogout={false}
       onNavigate={onNavigate}
       onLogout={onLogout}
@@ -168,32 +223,128 @@ export default function AgreementsPage({
           switcher stays pinned at the top of the page-level scroll while the
           overview cards scroll out of view. The solid page-color background
           covers content scrolling underneath. */}
-      <div className="mt-2 sticky top-0 z-20 bg-[var(--color-bg-page)]">
+      <div className="sticky top-0 z-20 bg-[var(--color-bg-page)]">
         <Tabs tabs={tabs} activeId={activeTab} onChange={(id) => setActiveTab(id as AgreementsFilterTab)} />
       </div>
 
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 flex-1 max-w-md">
+        {/* Filter chip row — desktop only. Horizontal scroll on narrow viewports. */}
+        <div className="hidden md:flex items-center gap-2 min-w-0 overflow-x-auto scrollbar-hide">
+          {/* Amount */}
+          <FilterPopover
+            label={amountLabel(filters.totalMin, filters.totalMax)}
+            selected={!!filters.totalMin || !!filters.totalMax}
+            onClear={() =>
+              setFilters((f) => ({ ...f, totalMin: "", totalMax: "" }))
+            }
+            panelClassName="w-80 p-6 flex flex-col gap-2"
+          >
+            {() => (
+              <>
+                <span className="text-sm font-medium tracking-tight text-[var(--color-text-secondary)]">
+                  Total
+                </span>
+                <div className="flex flex-col gap-2">
+                  <AmountInput
+                    placeholder="From"
+                    value={filters.totalMin}
+                    onChange={(v) =>
+                      setFilters((f) => ({ ...f, totalMin: v }))
+                    }
+                  />
+                  <AmountInput
+                    placeholder="To"
+                    value={filters.totalMax}
+                    onChange={(v) =>
+                      setFilters((f) => ({ ...f, totalMax: v }))
+                    }
+                  />
+                </div>
+              </>
+            )}
+          </FilterPopover>
+
+
+          {/* Issue date */}
+          <DateRangeFilter
+            label="Issue date"
+            menuLabel="Show agreements for"
+            from={filters.issueDateFrom}
+            to={filters.issueDateTo}
+            onChange={(from, to) =>
+              setFilters((f) => ({
+                ...f,
+                issueDateFrom: from,
+                issueDateTo: to,
+              }))
+            }
+          />
+
+          {/* Due date */}
+          <DateRangeFilter
+            label="Due date"
+            menuLabel="Show agreements due"
+            from={filters.dueDateFrom}
+            to={filters.dueDateTo}
+            onChange={(from, to) =>
+              setFilters((f) => ({
+                ...f,
+                dueDateFrom: from,
+                dueDateTo: to,
+              }))
+            }
+          />
+
+          {/* Signing date */}
+          <DateRangeFilter
+            label="Signing date"
+            menuLabel="Show agreements signed"
+            from={filters.signingDateFrom}
+            to={filters.signingDateTo}
+            onChange={(from, to) =>
+              setFilters((f) => ({
+                ...f,
+                signingDateFrom: from,
+                signingDateTo: to,
+              }))
+            }
+          />
+        </div>
+
+        {/* Right side — search; slide-out button on mobile. Tablet (md→lg)
+            collapses search to an icon that expands inline when clicked. At
+            lg+ the icon disappears and the bar is always visible. */}
+        <div className="flex flex-1 items-center gap-2 md:flex-none md:shrink-0">
+          {!tabletSearchOpen && (
+            <button
+              type="button"
+              aria-label="Search"
+              onClick={() => setTabletSearchOpen(true)}
+              className="hidden md:flex lg:hidden shrink-0 size-11 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] items-center justify-center text-[var(--color-icon-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] active:border-[var(--color-border-strong)] focus-visible:outline-none focus-visible:border-[var(--color-border-focus)] transition-colors cursor-pointer"
+            >
+              <Search size={20} />
+            </button>
+          )}
           <SearchBar
-            placeholder="Search agreements"
+            placeholder="Search by business or reference"
             value={search}
             onChange={setSearch}
-            className="flex-1"
+            autoFocus={tabletSearchOpen}
+            onBlur={() => {
+              if (!search) setTabletSearchOpen(false);
+            }}
+            className={`flex-1 ${
+              tabletSearchOpen ? "md:flex md:w-72 md:flex-none" : "md:hidden"
+            } lg:flex lg:w-80 lg:flex-none`}
           />
           <button
             onClick={() => setFiltersOpen(true)}
-            className="size-11 rounded-full bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-icon-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] active:border-[var(--color-border-strong)] focus-visible:outline-none focus-visible:border-[var(--color-border-focus)] transition-colors cursor-pointer shrink-0"
+            className="size-11 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-icon-secondary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] active:border-[var(--color-border-strong)] focus-visible:outline-none focus-visible:border-[var(--color-border-focus)] transition-colors cursor-pointer shrink-0 md:hidden"
             aria-label="Open filters"
           >
             <SlidersHorizontal size={20} />
           </button>
-        </div>
-
-        {/* Sort dropdown is desktop-only — the mobile toolbar keeps the search
-            bar and filter button only. */}
-        <div className="hidden md:block">
-          <SortDropdown options={sortOptions} value={sort} onChange={setSort} />
         </div>
       </div>
 
@@ -202,6 +353,8 @@ export default function AgreementsPage({
       <div>
         <AgreementsTable
           rows={displayedRows}
+          sortState={sortState}
+          onSortChange={setSortState}
           onAction={(row) => {
             if (row.action === "view") {
               setViewing(row);
@@ -219,7 +372,6 @@ export default function AgreementsPage({
 
       <AgreementsFilterSlideout
         open={filtersOpen}
-        merchants={uniqueMerchants}
         value={filters}
         onClose={() => setFiltersOpen(false)}
         onApply={setFilters}
@@ -269,5 +421,64 @@ export default function AgreementsPage({
         onClose={() => setSuccessToast(null)}
       />
     </DashboardLayout>
+  );
+}
+
+/**
+ * Date-range filter chip that wraps a preset menu + From/To date pair. Used
+ * for Issue date / Due date / Signing date — the three date filters share an
+ * identical UI; only the underlying state slot differs.
+ */
+function DateRangeFilter({
+  label,
+  menuLabel,
+  from,
+  to,
+  onChange,
+}: {
+  label: string;
+  menuLabel: string;
+  from: string;
+  to: string;
+  onChange: (from: string, to: string) => void;
+}) {
+  return (
+    <FilterPopover
+      label={label}
+      selected={!!from || !!to}
+      onClear={() => onChange("", "")}
+      panelClassName="w-80 p-6 flex flex-col gap-8"
+    >
+      {() => (
+        <>
+          <div className="flex flex-col gap-2">
+            <span className="text-sm font-medium tracking-tight text-[var(--color-text-secondary)]">
+              {menuLabel}
+            </span>
+            <PresetMenu
+              value={detectPreset(from, to)}
+              onChange={(p) => {
+                if (p === "custom") return;
+                const r = presetRange(p);
+                onChange(r.from, r.to);
+              }}
+            />
+          </div>
+          <div className="flex flex-col gap-4">
+            <DateFieldGroup
+              label="From"
+              value={from}
+              onChange={(v) => onChange(v, to)}
+            />
+            <DateFieldGroup
+              label="To"
+              placeholder="Today"
+              value={to}
+              onChange={(v) => onChange(from, v)}
+            />
+          </div>
+        </>
+      )}
+    </FilterPopover>
   );
 }

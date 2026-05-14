@@ -79,8 +79,8 @@ export default function SortableHeader({
           aria-expanded={open}
           className={`group inline-flex items-center gap-1 h-7 px-1.5 rounded-md text-sm font-medium tracking-tight text-[var(--color-text-secondary)] transition-colors ${
             active || open
-              ? "bg-[var(--color-bg-surface)]"
-              : "hover:bg-[var(--color-bg-surface)]"
+              ? "bg-[var(--color-bg-elevated)]"
+              : "hover:bg-[var(--color-bg-elevated)]"
           }`}
         >
           {align === "right" && renderIndicator()}
